@@ -1,3 +1,24 @@
+-- MySQL dump 10.15  Distrib 10.0.38-MariaDB, for debian-linux-gnu (x86_64)
+--
+-- Host: localhost    Database: java
+-- ------------------------------------------------------
+-- Server version       10.0.38-MariaDB-0ubuntu0.16.04.1
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8mb4 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+--
+-- Current Database: `java`
+--
+
 DROP DATABASE IF EXISTS `Hotel`;
 CREATE DATABASE `Hotel`;
 USE `Hotel`;
@@ -323,3 +344,9 @@ ALTER TABLE `Reservas` ADD CONSTRAINT `Salon_FK` FOREIGN KEY(`idSalon`)
 REFERENCES `Salones`(`id`)
 ON DELETE CASCADE
 ON UPDATE CASCADE;
+
+--
+-- User java
+--
+create user 'admin'@'localhost' identified by 'admin';
+GRANT SELECT, INSERT, UPDATE, DELETE ON `admin`.* TO 'admin'@'localhost';
