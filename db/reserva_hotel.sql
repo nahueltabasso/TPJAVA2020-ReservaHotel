@@ -1,27 +1,19 @@
--- MySQL dump 10.15  Distrib 10.0.38-MariaDB, for debian-linux-gnu (x86_64)
---
--- Host: localhost    Database: java
--- ------------------------------------------------------
--- Server version       10.0.38-MariaDB-0ubuntu0.16.04.1
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
-/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Current Database: `java`
---
-
 DROP DATABASE IF EXISTS `Hotel`;
 CREATE DATABASE `Hotel`;
 USE `Hotel`;
+
+###
+###  Tabla Roles 
+###
+
+DROP TABLE IF EXISTS `Hotel`.`Roles`;
+CREATE TABLE `Hotel`.`Roles` (   
+    `id` BIGINT NOT NULL AUTO_INCREMENT,   
+    `nombreRol` VARCHAR(45) NOT NULL,   
+    `fechaCreacion` TIMESTAMP, 
+    `fechaEliminacion` TIMESTAMP, 
+    PRIMARY KEY (`id`))   
+ENGINE=InnoDB DEFAULT CHARSET=utf8; 
 
 ###
 ### Tabla Paises
@@ -118,7 +110,12 @@ CREATE TABLE `Hotel`.`Personas` (
     `genero` VARCHAR(45),
     `fechaCreacion` TIMESTAMP, 
     `fechaEliminacion` TIMESTAMP,
+    `sueldoMensual` FLOAT DEFAULT NULL,
+    `descripcion` VARCHAR(45) DEFAULT NULL,
+    `legajo` BIGINT DEFAULT NULL,
+    `tipoPersona` VARCHAR(45),
     `idDomicilio` BIGINT NOT NULL,
+    `idRol` BIGINT NOT NULL,
     PRIMARY KEY (`id`)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -128,10 +125,17 @@ REFERENCES `Domicilios`(`id`)
 ON DELETE CASCADE
 ON UPDATE CASCADE;
 
+-- FK a la tabla Roles
+ALTER TABLE `Personas` ADD CONSTRAINT `Rol_FK` FOREIGN KEY(`idRol`) 
+REFERENCES `Roles`(`id`)
+ON DELETE CASCADE
+ON UPDATE CASCADE;
+
+
+/* Pasados a la superclase, modificadas las FKs
 ##
 ## Tabla Empleados
 ##
-
 DROP TABLE IF EXISTS `Hotel`.`Empleados`;
 CREATE TABLE `Hotel`.`Empleados` (
     `id` BIGINT NOT NULL AUTO_INCREMENT,
@@ -143,17 +147,14 @@ CREATE TABLE `Hotel`.`Empleados` (
     `idPersona` BIGINT NOT NULL UNIQUE,
     PRIMARY KEY (`id`)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
 -- FK a la tabla Personas
 ALTER TABLE `Empleados` ADD CONSTRAINT `Empleado_Persona_FK` FOREIGN KEY(`idPersona`) 
 REFERENCES `Personas`(`id`)
 ON DELETE CASCADE
 ON UPDATE CASCADE;
-
 ##
 ## Tabla Clientes
 ##
-
 DROP TABLE IF EXISTS `Hotel`.`Clientes`;
 CREATE TABLE `Hotel`.`Clientes` (
     `id` BIGINT NOT NULL AUTO_INCREMENT,
@@ -162,17 +163,17 @@ CREATE TABLE `Hotel`.`Clientes` (
     `idPersona` BIGINT NOT NULL UNIQUE,
     PRIMARY KEY (`id`)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
 ALTER TABLE `Clientes` ADD CONSTRAINT `Cliente_Persona_FK` FOREIGN KEY(`idPersona`) 
 REFERENCES `Personas`(`id`)
 ON DELETE CASCADE
 ON UPDATE CASCADE;
+*/
 
 ##
 ## Tabla Tarjetas
 ##
 
-DROP TABLE IF EXISTS `Hotel`.`Tarjetas`;
+DROP TABLE IF EXISTS `Hotel`.`Tarjetas`; 
 CREATE TABLE `Hotel`.`Tarjetas` (
     `id` BIGINT NOT NULL AUTO_INCREMENT,
     `numeroTarjeta` BIGINT NOT NULL,
@@ -181,15 +182,16 @@ CREATE TABLE `Hotel`.`Tarjetas` (
     `monto` FLOAT,
     `fechaCreacion` TIMESTAMP, 
     `fechaEliminacion` TIMESTAMP,
-    `idCliente` BIGINT NOT NULL,
+    `idPersona` BIGINT NOT NULL,
     PRIMARY KEY (`id`)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- FK a la tabla Clientes
-ALTER TABLE `Tarjetas` ADD CONSTRAINT `Cliente_FK` FOREIGN KEY(`idCliente`) 
-REFERENCES `Clientes`(`id`)
+-- FK a la tabla Personas
+ALTER TABLE `Tarjetas` ADD CONSTRAINT `Tarjeta_Persona_FK` FOREIGN KEY(`idPersona`) 
+REFERENCES `Personas`(`id`)
 ON DELETE CASCADE
 ON UPDATE CASCADE;
+
 
 ##
 ## Tabla Facturas
@@ -287,6 +289,20 @@ CREATE TABLE `Hotel`.`Salones` (
     PRIMARY KEY (`id`)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+/* VER SI CORRESPONDE, En alquiler, En reparación, Disponible, etc.
+##
+## Tabla EstadoHabitacionesSalones
+##
+DROP TABLE IF EXISTS `Hotel`.`EstadoHabitacionesSalones`;
+CREATE TABLE `Hotel`.`EstadoHabitacionesSalones` (
+    `id` BIGINT NOT NULL AUTO_INCREMENT,
+    `descripcion` VARCHAR(45),
+    `fechaCreacion` TIMESTAMP, 
+    `fechaEliminacion` TIMESTAMP,
+    PRIMARY KEY (`id`)
+)ENGINE=InnoDB DEFAULT CHARSET=utf8;
+*/
+
 ##
 ## Tabla EstadoReservas
 ##
@@ -314,7 +330,7 @@ CREATE TABLE `Hotel`.`Reservas` (
     `fechaSalida` DATETIME DEFAULT NULL,
     `fechaCreacion` TIMESTAMP, 
     `fechaEliminacion` TIMESTAMP,
-    `idCliente` BIGINT NOT NULL,
+    `idPersona` BIGINT NOT NULL,
     `idEstadoReserva` BIGINT NOT NULL,
     `idHabitacion` BIGINT,
     `idSalon` BIGINT,
@@ -322,8 +338,8 @@ CREATE TABLE `Hotel`.`Reservas` (
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- FK a la tabla Clientes
-ALTER TABLE `Reservas` ADD CONSTRAINT `Reserva_Cliente_FK` FOREIGN KEY(`idCliente`) 
-REFERENCES `Clientes`(`id`)
+ALTER TABLE `Reservas` ADD CONSTRAINT `Reserva_Persona_FK` FOREIGN KEY(`idPersona`) 
+REFERENCES `Personas`(`id`)
 ON DELETE CASCADE
 ON UPDATE CASCADE;
 
@@ -344,9 +360,3 @@ ALTER TABLE `Reservas` ADD CONSTRAINT `Salon_FK` FOREIGN KEY(`idSalon`)
 REFERENCES `Salones`(`id`)
 ON DELETE CASCADE
 ON UPDATE CASCADE;
-
---
--- User java
---
-create user 'admin'@'localhost' identified by 'admin';
-GRANT SELECT, INSERT, UPDATE, DELETE ON `admin`.* TO 'admin'@'localhost';
