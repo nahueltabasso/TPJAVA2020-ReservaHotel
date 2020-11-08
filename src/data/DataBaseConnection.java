@@ -12,8 +12,8 @@ public class DataBaseConnection {
 	// Valores de conexion a la base de datos (en este caso MySql)
 	private static String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
 	private static String JDBC_URL = "jdbc:mysql://localhost/hotel?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC";
-	private static String JDBC_USER = "admin";
-	private static String JDBC_PASS = "admin";
+	private static String JDBC_USER = "root";
+	private static String JDBC_PASS = "root";
 	private static Driver driver = null;
 	
 	// Usamos la palabra reservada synchronized para evitar fallos en  la conexion
