@@ -12,18 +12,21 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONObject;
 
+import com.google.gson.Gson;
+
 import controller.LoginController;
 import entities.Persona;
 import entities.Rol;
+import utils.JsonToJavaObject;
 
 @WebServlet("/Login")
-public class Login extends HttpServlet {
+public class LoginServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
 	private Logger logger = LogManager.getLogger(getClass());
 	private LoginController loginCtrl = new LoginController();
 	
-    public Login() {}
+    public LoginServlet() {}
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		doPost(request, response);
@@ -31,9 +34,10 @@ public class Login extends HttpServlet {
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		try {
-			String email = request.getParameter("email");
-			String password = request.getParameter("password");
+			String payloadRequest = JsonToJavaObject.getBody(request);
+			
 			Persona persona = new Persona();
+			persona = new Gson().fromJson(payloadRequest, Persona.class);
 			
 			Persona personaLogueada = loginCtrl.login(persona);
 			logger.log(Level.INFO, "Usuario: " + persona.getNombre() + " " + persona.getApellido() + " logueado con exito!");

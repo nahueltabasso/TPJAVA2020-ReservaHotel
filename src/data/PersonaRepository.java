@@ -30,6 +30,7 @@ public class PersonaRepository {
 			persona.setTipoDocumento(rs.getString("tipoDocumento"));
 			persona.setNroDocumento(rs.getLong("nroDocumento"));
 			persona.setEmail(rs.getString("email"));
+			persona.setPassword(rs.getString("password"));
 			persona.setCuit(rs.getString("cuit"));
 			persona.setTelefono(rs.getLong("telefono"));
 			persona.setGenero(rs.getString("genero"));
@@ -45,6 +46,11 @@ public class PersonaRepository {
 		return persona;
 	}
 	
+	/**
+	 * Metodo que retorna todas las personas de la base de datos
+	 * @return
+	 * @throws Exception
+	 */
 	public List<Persona> findAll() throws Exception {
 		Connection connection = null;
 		PreparedStatement statement = null;
@@ -73,6 +79,12 @@ public class PersonaRepository {
 		return list;
 	}
 	
+	/**
+	 * Metodo que retorna una persona segun su id
+	 * @param id
+	 * @return
+	 * @throws Exception
+	 */
 	public Persona findById(Long id) throws Exception {
 		Connection connection = null;
 		PreparedStatement statement = null;
@@ -100,6 +112,12 @@ public class PersonaRepository {
 		return persona;
 	}
 	
+	/**
+	 * Metodo que retorna una persona por su email
+	 * @param email
+	 * @return
+	 * @throws Exception
+	 */
 	public Persona findByEmail(String email) throws Exception {
 		Connection connection = null;
 		PreparedStatement statement = null;
@@ -127,6 +145,13 @@ public class PersonaRepository {
 		return persona;
 	}
 	
+	/**
+	 * Metodo que retorna una persona por su tipo y numero de documento
+	 * @param tipoDocumento
+	 * @param nroDocumento
+	 * @return
+	 * @throws Exception
+	 */
 	public Persona findByTipoAndNroDocumento(String tipoDocumento, Long nroDocumento) throws Exception {
 		Connection connection = null;
 		PreparedStatement statement = null;
@@ -155,14 +180,20 @@ public class PersonaRepository {
 		return persona;
 	}
 
+	/**
+	 * Metodo que inserta un registro en la base de datos
+	 * @param persona
+	 * @return
+	 * @throws Exception
+	 */
 	public Persona save(Persona persona) throws Exception {
 		Connection connection = null;
 		PreparedStatement statement = null;
 		ResultSet resultSet = null;
 		try {
 			connection = DataBaseConnection.getConnection();
-			statement = connection.prepareStatement("insert into personas(nombre, apellido, tipoDocumento, nroDocumento, email, password, cuit, telefono, genero, fechaCreacion, fechaEliminacion, sueldoMensual, descripcion, legajo, idRol) "
-												  + "values (?,?,?,?,?,?,?,?,?,?,?,?,?,?)", PreparedStatement.RETURN_GENERATED_KEYS);
+			statement = connection.prepareStatement("insert into personas(nombre, apellido, tipoDocumento, nroDocumento, email, password, cuit, telefono, genero, fechaCreacion, fechaEliminacion, sueldoMensual, descripcion, legajo, idRol, idDomicilio) "
+												  + "values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", PreparedStatement.RETURN_GENERATED_KEYS);
 			// Pasamos los parametros para la query nativa
 			statement.setString(1, persona.getNombre());
 			statement.setString(2, persona.getApellido());
@@ -173,13 +204,20 @@ public class PersonaRepository {
 			statement.setString(7, persona.getCuit());
 			statement.setLong(8, persona.getTelefono());
 			statement.setString(9, persona.getGenero());
-			statement.setDate(10, (Date) persona.getFechaCreacion());
+			statement.setDate(10, new Date(persona.getFechaCreacion().getTime()));
 			// Fecha de eliminacion de persona se guarda como null
-			statement.setDate(11, null);
-			statement.setDouble(12, persona.getSueldoMensual());
-			statement.setString(12, persona.getDescripcion());
-			statement.setLong(13, persona.getLegajo());
-			statement.setLong(14, persona.getRol().getId());
+			statement.setNull(11, java.sql.Types.DATE);
+			if (persona.getRol().getNombreRol().equalsIgnoreCase(Rol.CLIENTE)) {
+				statement.setNull(12, java.sql.Types.DOUBLE);
+				statement.setNull(13, java.sql.Types.VARCHAR);
+				statement.setNull(14, java.sql.Types.BIGINT);
+			} else {
+				statement.setDouble(12, persona.getSueldoMensual());
+				statement.setString(13, persona.getDescripcion());
+				statement.setLong(14, persona.getLegajo());
+			}
+			statement.setLong(15, persona.getRol().getId());
+			statement.setLong(16, 1L);
 
 			statement.executeUpdate();
 			resultSet = statement.getGeneratedKeys();
@@ -190,6 +228,7 @@ public class PersonaRepository {
 			}
 		} catch (SQLException e) {
 			logger.log(Level.ERROR, e.getMessage());
+			e.printStackTrace();
 			throw new DataException(null, "Ocurrio un error en la base de datos, contactar con el Administrador del Sistema", Level.ERROR);
 		} finally {
 			DataBaseConnection.closeConnection(connection);
@@ -199,6 +238,11 @@ public class PersonaRepository {
 		return persona;
 	}
 	
+	/**
+	 * Metodo que elimina un registro de la base de datos por su id
+	 * @param id
+	 * @throws Exception
+	 */
 	public void delete(Long id) throws Exception {
 		Connection connection = null;
 		PreparedStatement statement = null;
@@ -216,7 +260,44 @@ public class PersonaRepository {
 		}
 	}
 	
-	public Persona existPersonaByEmailOrTipoAndNroDocumento(Persona persona) {
+	/**
+	 * Metodo que devuelve true si un persona ya existe en la base
+	 * @param persona
+	 * @return
+	 * @throws Exception
+	 */
+	public boolean existPersonaByEmailOrTipoAndNroDocumento(Persona persona) throws Exception {
+		Connection connection = null;
+		PreparedStatement statement = null;
+		ResultSet resultSet = null;
+		boolean row;
+		try {
+			connection = DataBaseConnection.getConnection();
+			statement = connection.prepareStatement("select count(*) from personas where email = ? or (tipoDocumento = ? and nroDocumento = ?)");
+			statement.setString(1, persona.getEmail());
+			statement.setString(2, persona.getTipoDocumento());
+			statement.setLong(3, persona.getNroDocumento());
+
+			row = statement.execute();
+		} catch (SQLException e) {
+			logger.log(Level.ERROR, e.getMessage());
+			throw e;
+		} finally {
+			DataBaseConnection.closeConnection(connection);
+			DataBaseConnection.closePreparedStatement(statement);
+			DataBaseConnection.closeResultSet(resultSet);
+		}
+		
+		return row;
+	}
+	
+	/**
+	 * Metodo que actualiza un registro de la base de datos
+	 * @param persona
+	 * @return
+	 * @throws Exception
+	 */
+	public Persona update(Persona persona) throws Exception {
 		
 		return null;
 	}
