@@ -119,6 +119,10 @@ CREATE TABLE `Hotel`.`Personas` (
     PRIMARY KEY (`id`)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+ALTER TABLE `Personas` ADD COLUMN `password` VARCHAR(30) NOT NULL;
+ALTER TABLE `Personas` MODIFY `idDomicilio` BIGINT NULL;
+ALTER TABLE `Personas` MODIFY `password` VARCHAR(255) NOT NULL;
+
 -- FK a la tabla Domicilios
 ALTER TABLE `Personas` ADD CONSTRAINT `Domicilio_FK` FOREIGN KEY(`idDomicilio`) 
 REFERENCES `Domicilios`(`id`)
@@ -360,3 +364,4 @@ ALTER TABLE `Reservas` ADD CONSTRAINT `Salon_FK` FOREIGN KEY(`idSalon`)
 REFERENCES `Salones`(`id`)
 ON DELETE CASCADE
 ON UPDATE CASCADE;
+
