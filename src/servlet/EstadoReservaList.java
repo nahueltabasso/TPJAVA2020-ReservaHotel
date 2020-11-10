@@ -22,6 +22,7 @@ import entities.Persona;
 
 @WebServlet("/EstadoReservaList")
 public class EstadoReservaList extends HttpServlet {
+	
 	private static final long serialVersionUID = 1L;
 	private EstadoReservaController estadoReservaCtrl = new EstadoReservaController();
        

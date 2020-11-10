@@ -19,25 +19,14 @@ import org.json.JSONObject;
 import controller.RolController;
 import entities.Rol;
 
-/**
- * Servlet implementation class RolList
- */
 @WebServlet("/RolList")
 public class RolList extends HttpServlet {
+
 	private static final long serialVersionUID = 1L;
     private RolController rolCtrl = new RolController();
 	
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
-    public RolList() {
-        super();
-        // TODO Auto-generated constructor stub
-    }
+    public RolList() {}
 
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		try {
 			List<Rol> roles = new ArrayList<Rol>();
@@ -62,9 +51,6 @@ public class RolList extends HttpServlet {
 		}
 	}
 
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		doGet(request, response);
 	}
