@@ -1,0 +1,134 @@
+package controller;
+
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import data.PersonaRepository;
+import data.RolRepository;
+import entities.Persona;
+import entities.Rol;
+import utils.Hash;
+import utils.Utils;
+
+public class PersonaController {
+
+	private Logger logger = LogManager.getLogger(getClass());
+	private PersonaRepository personaRepository = new PersonaRepository();
+	private RolRepository rolRepository = new RolRepository();
+	
+	public Persona registrarPersona(Persona persona) throws Exception {
+		logger.log(Level.INFO, "Ingresa a registrarPersona()");
+		preValidation(persona, true);
+		validPersonaBeforeSave(persona);
+		Persona personaDB = personaRepository.save(persona);
+		return personaDB;
+	}
+	
+	public List<Persona> getAll() throws Exception {
+		logger.log(Level.INFO, "Ingresa a getAll()");
+		return personaRepository.findAll();
+	}
+	
+	public Persona getById(Long id) throws Exception {
+		logger.log(Level.INFO, "Ingresa a getById()");
+		return personaRepository.findById(id);
+	}
+	
+	public Persona getByDocumento(Persona persona) throws Exception {
+		logger.log(Level.INFO, "Ingresa a getByDocumento()");
+		return personaRepository.findByTipoAndNroDocumento(persona.getTipoDocumento(), persona.getNroDocumento());
+	}
+	
+	public void delete(Long id) throws Exception {
+		logger.log(Level.INFO, "Ingresa a delete()");
+		Persona personaDB = personaRepository.findById(id);
+		if (personaDB == null) {
+			throw new Exception("ERROR - No existe el usuario en la base de datos!");
+		}
+		Rol rolPersona = personaDB.getRol();
+		if (rolPersona.getNombreRol().equalsIgnoreCase(Rol.ADMINISTRADOR)) {
+			throw new Exception("ERROR - No se puede borrar un usuario con rol ADMINITRADOR");
+		}
+		personaRepository.delete(id);
+	}
+	
+	public Persona actualizarPersona(Persona persona) throws Exception {
+		logger.log(Level.INFO, "Ingresa a actualizarPersona()");
+		preValidation(persona, false);
+		Persona personaDB = personaRepository.update(persona);
+		return personaDB;
+	}
+	
+	private void preValidation(Persona persona, boolean isCreate) throws Exception {
+		logger.log(Level.INFO, "Ingresa a preValidation()");
+		boolean valid = personaRepository.existPersonaByEmailOrTipoAndNroDocumento(persona);
+		if (valid) {
+			throw new Exception ("El usuario ya existe en la base de datos");
+		}
+	}
+	
+	private String generarHashPassword(String password) throws UnsupportedEncodingException {
+		logger.log(Level.INFO, "Ingresa a generarHashPassword()");
+		String passwordHash = Hash.getPasswordHashSHA512(password);
+		return password;
+	}
+	
+	private void validPersonaBeforeSave(Persona persona) throws Exception {
+		// Validamos si el nombre o el apellido contienen digitos
+		if (Utils.cadContainsDigit(persona.getNombre()) || Utils.cadContainsDigit(persona.getApellido())) {
+			throw new Exception("Nombre y el apellido no pueden contener digitos!");
+		}
+		
+		// Validamos el numero de documento
+		if (Utils.cadContainsLetters(persona.getNroDocumento().toString())) {
+			throw new Exception("Numero de documento no valido!");
+		}
+		
+		// Validamos el numero de telefono
+		if (Utils.cadContainsLetters(persona.getTelefono().toString())) {
+			throw new Exception("Numero de telefono no valido!");
+		}
+		
+		// Validamos el email
+		if (!Utils.validaEmail(persona.getEmail())) {
+			throw new Exception("Formato de email no valido!");
+		}
+		
+		// Validamos la seguridad del password antes del hash
+		if (!Utils.validaSeguridadPassword(persona.getPassword())) {
+			throw new Exception("Password no segura!");
+		}
+		String passwordHash = null;
+		passwordHash = Hash.getPasswordHashSHA512(persona.getPassword());
+		persona.setPassword(passwordHash);
+		
+		// Validamos el cuit
+		String cuit = persona.getCuit();
+		String dni = persona.getNroDocumento().toString();
+		String genero = persona.getGenero();
+		if (!Utils.validarCuit(cuit, dni, genero)) {
+			throw new Exception("CUIT/CUIL no valido!");
+		}
+		
+		// Asignamos el rol correspondiente a la persona
+		List<Rol> roles = new ArrayList<Rol>();
+		roles.add(persona.getRol());
+		if (Utils.isNullOrEmpty(roles)) {
+			persona.setRol(rolRepository.findByNombre(Rol.CLIENTE));
+			persona.setSueldoMensual(null);
+			persona.setDescripcion(null);
+			persona.setLegajo(null);
+		} else {
+			persona.setRol(rolRepository.findById(persona.getRol().getId()));
+		}
+		
+		persona.setFechaCreacion(new Date());
+		persona.setFechaEliminacion(null);
+	}
+}

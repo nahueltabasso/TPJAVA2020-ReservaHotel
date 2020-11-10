@@ -52,13 +52,13 @@ INSERT INTO `Hotel`.`Domicilios` (`calle`, `numero`, `fechaCreacion`, `idLocalid
 ('Pellegrini', 1414, '2020-01-01 13:00:00', 3),
 ('Mitre', 1090, '2020-01-01 13:00:00', 9);
 
-INSERT INTO `Hotel`.`Personas` (`nombre`, `apellido`, `email`, `nroDocumento`, `tipoDocumento`, `genero`, `fechaNacimiento`, `cuit`, `telefono`, `fechaCreacion`, `legajo`, `descripcion`, `sueldoMensual`, `tipoPersona`, `idDomicilio`, `idRol`) VALUES
-('Juan', 'Perez', 'jperez@gmail.com', 30444888, 'DNI', 'Masculino', '1990-10-10', '20-30444888-3', 3416777888, '2020-01-01 13:00:00', 101010, 'Gerente', 70000, "Empleado", 1, 1),
-('Pedro', 'Rodriguez', 'prodriguez@gmail.com', 20555888, 'DNI', 'Masculino', '1980-04-15', '20-20555888-1', 3416123456, '2020-01-01 13:00:00', 202020, 'Administrativo', 35000, "Empleado", 2, 2),
-('Horacio', 'Carpatto', 'hcarpatto@gmail.com', 36000333, 'DNI', 'Masculino', '1999-05-20', '20-36000333-3', 3415222111, '2020-01-01 13:00:00', 303030, 'Conserje', 35000, "Empleado", 5, 2),
-('Esteban', 'Quito', 'equito@gmail.com', 35777888, 'DNI', 'Masculino', '1992-01-16', '20-35777888-7', 3416999456, '2020-01-01 13:00:00', NULL, NULL, NULL, "Cliente", 3, 3),
-('Federico', 'Fernandez', 'ffernandez@gmail.com', 25444888, 'DNI', 'Masculino', '1985-02-14', '20-25444888-4', 3416123888, '2020-01-01 13:00:00', NULL, NULL, NULL, "Cliente", 4, 3),
-('Laura', 'Giorgio', 'lgiorgio@gmail.com', 32666777, 'DNI', 'Femenino', '1986-07-09', '27-32666777-0', 3516000123, '2020-01-01 13:00:00', NULL, NULL, NULL, "Cliente", 6, 3);
+INSERT INTO `Hotel`.`Personas` (`nombre`, `apellido`, `email`, `nroDocumento`, `tipoDocumento`, `genero`, `fechaNacimiento`, `cuit`, `telefono`, `fechaCreacion`, `legajo`, `descripcion`, `sueldoMensual`, `tipoPersona`, `idDomicilio`, `idRol`, `password`) VALUES
+('Juan', 'Perez', 'jperez@gmail.com', 30444888, 'DNI', 'Masculino', '1990-10-10', '20-30444888-3', 3416777888, '2020-01-01 13:00:00', 101010, 'Gerente', 70000, "Empleado", 1, 1, 'f5bec753bbee8b53fc7952acb03be409cafd8e339b7e2116010bb2c4550d9d7d556c88dfd33746f3eaef6b94b0a26b3c52107cb4f4eb8481fd8fb2524b27d5fb'),
+('Pedro', 'Rodriguez', 'prodriguez@gmail.com', 20555888, 'DNI', 'Masculino', '1980-04-15', '20-20555888-1', 3416123456, '2020-01-01 13:00:00', 202020, 'Administrativo', 35000, "Empleado", 2, 2, 'f5bec753bbee8b53fc7952acb03be409cafd8e339b7e2116010bb2c4550d9d7d556c88dfd33746f3eaef6b94b0a26b3c52107cb4f4eb8481fd8fb2524b27d5fb'),
+('Horacio', 'Carpatto', 'hcarpatto@gmail.com', 36000333, 'DNI', 'Masculino', '1999-05-20', '20-36000333-3', 3415222111, '2020-01-01 13:00:00', 303030, 'Conserje', 35000, "Empleado", 5, 2, 'f5bec753bbee8b53fc7952acb03be409cafd8e339b7e2116010bb2c4550d9d7d556c88dfd33746f3eaef6b94b0a26b3c52107cb4f4eb8481fd8fb2524b27d5fb'),
+('Esteban', 'Quito', 'equito@gmail.com', 35777888, 'DNI', 'Masculino', '1992-01-16', '20-35777888-7', 3416999456, '2020-01-01 13:00:00', NULL, NULL, NULL, "Cliente", 3, 3, 'f5bec753bbee8b53fc7952acb03be409cafd8e339b7e2116010bb2c4550d9d7d556c88dfd33746f3eaef6b94b0a26b3c52107cb4f4eb8481fd8fb2524b27d5fb'),
+('Federico', 'Fernandez', 'ffernandez@gmail.com', 25444888, 'DNI', 'Masculino', '1985-02-14', '20-25444888-4', 3416123888, '2020-01-01 13:00:00', NULL, NULL, NULL, "Cliente", 4, 3, 'f5bec753bbee8b53fc7952acb03be409cafd8e339b7e2116010bb2c4550d9d7d556c88dfd33746f3eaef6b94b0a26b3c52107cb4f4eb8481fd8fb2524b27d5fb'),
+('Laura', 'Giorgio', 'lgiorgio@gmail.com', 32666777, 'DNI', 'Femenino', '1986-07-09', '27-32666777-0', 3516000123, '2020-01-01 13:00:00', NULL, NULL, NULL, "Cliente", 6, 3, 'f5bec753bbee8b53fc7952acb03be409cafd8e339b7e2116010bb2c4550d9d7d556c88dfd33746f3eaef6b94b0a26b3c52107cb4f4eb8481fd8fb2524b27d5fb');
 
 /* Pasados a la superclase como tipoPersona
 INSERT INTO `Hotel`.`Clientes` (`fechaCreacion`, `idPersona`) VALUES
