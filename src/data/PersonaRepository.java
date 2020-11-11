@@ -273,12 +273,13 @@ public class PersonaRepository {
 		boolean row;
 		try {
 			connection = DataBaseConnection.getConnection();
-			statement = connection.prepareStatement("select count(*) from personas where email = ? or (tipoDocumento = ? and nroDocumento = ?)");
+			statement = connection.prepareStatement("select * from personas where email = ? or (tipoDocumento = ? and nroDocumento = ?)");
 			statement.setString(1, persona.getEmail());
 			statement.setString(2, persona.getTipoDocumento());
 			statement.setLong(3, persona.getNroDocumento());
 
-			row = statement.execute();
+			resultSet = statement.executeQuery();
+			row = resultSet.isBeforeFirst();
 		} catch (SQLException e) {
 			logger.log(Level.ERROR, e.getMessage());
 			throw e;
@@ -287,7 +288,7 @@ public class PersonaRepository {
 			DataBaseConnection.closePreparedStatement(statement);
 			DataBaseConnection.closeResultSet(resultSet);
 		}
-		
+
 		return row;
 	}
 	
