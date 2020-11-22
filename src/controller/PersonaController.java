@@ -61,15 +61,22 @@ public class PersonaController {
 	public Persona actualizarPersona(Persona persona) throws Exception {
 		logger.log(Level.INFO, "Ingresa a actualizarPersona()");
 		preValidation(persona, false);
-		Persona personaDB = personaRepository.update(persona);
-		return personaDB;
+		return actualizar(persona);
 	}
 	
 	private void preValidation(Persona persona, boolean isCreate) throws Exception {
 		logger.log(Level.INFO, "Ingresa a preValidation()");
-		boolean valid = personaRepository.existPersonaByEmailOrTipoAndNroDocumento(persona);
-		if (valid) {
-			throw new Exception ("El usuario ya existe en la base de datos");
+		boolean valid;
+		if (isCreate) {
+			valid = personaRepository.existPersonaByEmailOrTipoAndNroDocumento(persona);
+			if (valid) {
+				throw new Exception ("El usuario ya existe en la base de datos");
+			}
+		} else {
+			valid = personaRepository.existPersonaByEmail(persona.getEmail());
+			if (valid) {
+				throw new Exception("El email ya existe en la base de datos");
+			}
 		}
 	}
 	
@@ -80,6 +87,8 @@ public class PersonaController {
 	}
 	
 	private void validPersonaBeforeSave(Persona persona) throws Exception {
+		logger.log(Level.INFO, "Ingresa a validPersonaBeforeSave()");
+
 		// Validamos si el nombre o el apellido contienen digitos
 		if (Utils.cadContainsDigit(persona.getNombre()) || Utils.cadContainsDigit(persona.getApellido())) {
 			throw new Exception("Nombre y el apellido no pueden contener digitos!");
@@ -130,5 +139,29 @@ public class PersonaController {
 		
 		persona.setFechaCreacion(new Date());
 		persona.setFechaEliminacion(null);
+	}
+	
+	private Persona actualizar(Persona persona) throws Exception {
+		logger.log(Level.INFO, "Ingresa a actualizar()");
+
+		// Obtenemos la persona de la BD por su id
+		Persona personaDb = personaRepository.findById(persona.getId());
+		
+		if (!Utils.validaEmail(persona.getEmail())) {
+			throw new Exception("Formato de email no valido!");
+		}
+		personaDb.setEmail(persona.getEmail());
+		
+		if (Utils.cadContainsLetters(persona.getTelefono().toString())) {
+			throw new Exception("Numero de telefono no valido!");
+		}
+		persona.setTelefono(persona.getTelefono());
+		
+		// Si la persona tiene rol empleado o rol administrador
+		if (personaDb.getRol().getNombreRol().equalsIgnoreCase(Rol.EMPLEADO) || personaDb.getRol().getNombreRol().equalsIgnoreCase(Rol.ADMINISTRADOR)) {
+			personaDb.setSueldoMensual(persona.getSueldoMensual());
+			personaDb.setDescripcion(persona.getDescripcion());
+		}
+		return personaRepository.update(personaDb);
 	}
 }

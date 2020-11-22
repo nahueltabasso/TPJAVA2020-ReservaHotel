@@ -121,9 +121,46 @@ public class PersonaServlet extends HttpServlet {
 
 	@Override
 	protected void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		
+		Gson gson = new Gson();
+		try {
+			String payloadRequest = JsonToJavaObject.getBody(request);
+			
+			Persona persona = new Persona();
+			persona = new Gson().fromJson(payloadRequest, Persona.class);
+			
+			// Recuperamos el usuario logueado
+			Persona personaLogueada = (Persona) request.getSession().getAttribute("usuario");
+			
+			// Validamos que el usuario este logueado
+			if (personaLogueada == null) {
+				throw new AccessDeniedException("Acceso Denegado");
+			}
+
+			// Si el usuario logueado es un cliente validamos que este modificando sus propios datos personales
+			if (persona.getRol().getNombreRol().equalsIgnoreCase(Rol.CLIENTE)) {
+				if (persona.getId() == null || persona.getId() != personaLogueada.getId()) {
+					throw new AccessDeniedException("Acceso Denegado - Un perfil con rol Cliente no puede modificar los datos de otro usuario!");
+ 				}
+			}
+			
+			// Si llego aca implica que se cumplen con los permisos, persistimos el objeto
+			Persona personaDB = personaCtrl.actualizarPersona(persona);
+			logger.log(Level.INFO, "Usuario: " + personaDB.getNombre() + " " + personaDB.getApellido() + " actualizado con exito!");
+
+			// Response
+			response.setContentType("application/json");
+		    response.setCharacterEncoding("UTF-8");
+		    response.getWriter().print(gson.toJson(personaDB));
+		    response.getWriter().flush();
+		} catch (AccessDeniedException e) {
+			logger.log(Level.ERROR, e.getMessage());
+			MessageErrorResponse mensaje = new MessageErrorResponse(e.getMessage());
+			response.getWriter().print(gson.toJson(mensaje));
+		} catch (Exception e) {
+			logger.log(Level.ERROR, e.getMessage());
+			MessageErrorResponse mensaje = new MessageErrorResponse(e.getMessage());
+			response.getWriter().print(gson.toJson(mensaje));
+		}
 	}
-	
-	
 	
 }

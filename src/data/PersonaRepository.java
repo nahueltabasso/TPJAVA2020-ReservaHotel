@@ -5,6 +5,7 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -293,13 +294,70 @@ public class PersonaRepository {
 	}
 	
 	/**
+	 * Metodo que devuelve true el email ya esta asociado a una persona en la base de datos
+	 * @param email
+	 * @return
+	 * @throws Exception
+	 */
+	public boolean existPersonaByEmail(String email) throws Exception {
+		Connection connection = null;
+		PreparedStatement statement = null;
+		ResultSet resultSet = null;
+		boolean row;
+		try {
+			connection = DataBaseConnection.getConnection();
+			statement = connection.prepareStatement("select * from personas where email = ?");
+			statement.setString(1, email);
+			
+			resultSet = statement.executeQuery();
+			row = resultSet.isBeforeFirst();
+		} catch (SQLException e) {
+			logger.log(Level.ERROR, e.getMessage());
+			throw e;
+		} finally {
+			DataBaseConnection.closeConnection(connection);
+			DataBaseConnection.closePreparedStatement(statement);
+			DataBaseConnection.closeResultSet(resultSet);
+		}
+		return row;
+	}
+	
+	/**
 	 * Metodo que actualiza un registro de la base de datos
 	 * @param persona
 	 * @return
 	 * @throws Exception
 	 */
 	public Persona update(Persona persona) throws Exception {
-		
-		return null;
+		Connection connection = null;
+		PreparedStatement statement = null;
+		ResultSet resultSet = null;
+		try {
+			connection = DataBaseConnection.getConnection();
+			if (persona.getRol().getNombreRol().equalsIgnoreCase(Rol.CLIENTE)) {
+				statement = connection.prepareStatement("update personas set email = ?, telefono = ? WHERE id = ?");
+				statement.setString(1, persona.getEmail());
+				statement.setLong(2, persona.getTelefono());				
+				statement.setLong(3, persona.getId());
+			} else {
+				statement = connection.prepareStatement("update personas set email = ?, telefono = ?, set descripcion = ?, set sueldoMensual = ? WHERE id = ?");
+				statement.setString(1, persona.getEmail());
+				statement.setLong(2, persona.getTelefono());				
+				statement.setString(3, persona.getDescripcion());
+				statement.setDouble(4, persona.getSueldoMensual());				
+				statement.setLong(5, persona.getId());
+			}
+
+			int row = statement.executeUpdate();
+			persona = this.findById(persona.getId());
+		} catch (SQLException e) {
+			logger.log(Level.ERROR, e.getMessage());
+			throw e;
+		} finally {
+			DataBaseConnection.closeConnection(connection);
+			DataBaseConnection.closePreparedStatement(statement);
+			DataBaseConnection.closeResultSet(resultSet);
+		}
+		return persona;
 	}
 }
