@@ -6,8 +6,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-
 import entities.Localidad;
+
 
 public class LocalidadRepository {
 
@@ -61,5 +61,33 @@ public class LocalidadRepository {
 			DataBaseConnection.closeResultSet(resultSet);
 		}
 		return localidadList;
+	}
+	
+	/**
+	 * Metodo que retorna una Localidad por su id
+	 * @param id
+	 * @return
+	 */
+	public Localidad findById(Long id) {
+		Connection connection = null;
+		PreparedStatement statement = null;
+		ResultSet resultSet = null;
+		Localidad localidad = new Localidad();
+		try {
+			connection = DataBaseConnection.getConnection();
+			statement = connection.prepareStatement("select * from localidades where id = ?");
+			statement.setLong(1, id);
+			resultSet = statement.executeQuery();
+			if (resultSet != null && resultSet.next()) {
+				localidad = buildLocalidad(resultSet);
+			}
+		} catch(SQLException e) {
+			e.printStackTrace();
+		} finally {
+			DataBaseConnection.closeResultSet(resultSet);
+			DataBaseConnection.closePreparedStatement(statement);
+			DataBaseConnection.closeConnection(connection);
+		}
+		return localidad;
 	}
 }

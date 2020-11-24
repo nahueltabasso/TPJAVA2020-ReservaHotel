@@ -19,7 +19,31 @@ public class EstadoReservaRepository {
 			estado.setFechaCreacion(resultSet.getDate("fechaCreacion"));
 			estado.setFechaEliminacion(resultSet.getDate("fechaEliminacion"));
 		} catch (Exception e) {
-			// TODO: handle exception
+			e.printStackTrace();
+		}
+		return estado;
+	}
+	
+	public EstadoReserva findById(Long id) {
+		Connection connection = null;
+		PreparedStatement statement = null;
+		ResultSet resultSet = null;
+		EstadoReserva estado = new EstadoReserva();
+		try {
+			connection = DataBaseConnection.getConnection();
+			statement = connection.prepareStatement("select * from estadoreservas where id = ?");
+			statement.setLong(1, id);
+			
+			resultSet = statement.executeQuery();
+			if (resultSet != null && resultSet.next()) {
+				estado = buildEstadoReserva(resultSet);
+			}
+		} catch(SQLException e) {
+			e.printStackTrace();
+		} finally {
+			DataBaseConnection.closeResultSet(resultSet);
+			DataBaseConnection.closePreparedStatement(statement);
+			DataBaseConnection.closeConnection(connection);
 		}
 		return estado;
 	}

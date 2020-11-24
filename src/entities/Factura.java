@@ -36,10 +36,10 @@ public class Factura {
 	public void setFechaCreacion(Date fechaCreacion) {
 		this.fechaCreacion = fechaCreacion;
 	}
-	public Date getFechaEliminación() {
+	public Date getFechaEliminacion() {
 		return fechaEliminación;
 	}
-	public void setFechaEliminación(Date fechaEliminación) {
+	public void setFechaEliminacion(Date fechaEliminación) {
 		this.fechaEliminación = fechaEliminación;
 	}
 	public Tarjeta getTarjeta() {

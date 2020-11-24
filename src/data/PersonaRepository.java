@@ -5,7 +5,6 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,6 +12,7 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import entities.Domicilio;
 import entities.Persona;
 import entities.Rol;
 import exceptions.DataException;
@@ -21,6 +21,7 @@ public class PersonaRepository {
 
 	private Logger logger = LogManager.getLogger(getClass());
 	private RolRepository rolRepository = new RolRepository();
+	private DomicilioRepository domicilioRepository = new DomicilioRepository();
 
 	private Persona buildPersona(ResultSet rs) throws Exception {
 		Persona persona = new Persona();
@@ -41,6 +42,8 @@ public class PersonaRepository {
 			persona.setLegajo(rs.getLong("legajo"));
 			Rol rol = rolRepository.findById(rs.getLong("idRol"));
 			persona.setRol(rol);
+			List<Domicilio> domicilioList = domicilioRepository.findDomiciliosByIdPersona(rs.getLong("id"));
+			persona.setDomicilioList(domicilioList);
 		} catch (Exception e) {
 			logger.log(Level.ERROR, e.getMessage());
 		}

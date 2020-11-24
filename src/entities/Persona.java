@@ -2,6 +2,7 @@ package entities;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 public class Persona implements Serializable {
 
@@ -22,6 +23,7 @@ public class Persona implements Serializable {
 	private String descripcion;
 	private Long legajo;
 	private Rol rol;
+	private List<Domicilio> domicilioList;
 
 	public Persona() {
 	}
@@ -153,5 +155,17 @@ public class Persona implements Serializable {
 	public void setRol(Rol rol) {
 		this.rol = rol;
 	}
+
+	public List<Domicilio> getDomicilioList() {
+		return domicilioList;
+	}
+
+	public void setDomicilioList(List<Domicilio> domicilioList) {
+		this.domicilioList = domicilioList;
+	}
+
+	
+	
+	
 
 }

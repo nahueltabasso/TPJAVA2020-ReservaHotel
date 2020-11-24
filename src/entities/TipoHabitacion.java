@@ -2,7 +2,7 @@ package entities;
 
 import java.util.Date;
 
-import com.mysql.cj.jdbc.Blob;
+import java.sql.Blob;
 
 public class TipoHabitacion {
 	
