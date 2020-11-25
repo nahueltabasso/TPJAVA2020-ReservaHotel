@@ -343,7 +343,7 @@ public class PersonaRepository {
 				statement.setLong(2, persona.getTelefono());				
 				statement.setLong(3, persona.getId());
 			} else {
-				statement = connection.prepareStatement("update personas set email = ?, telefono = ?, set descripcion = ?, set sueldoMensual = ? WHERE id = ?");
+				statement = connection.prepareStatement("update personas set email = ?, set telefono = ?, set descripcion = ?, set sueldoMensual = ? WHERE id = ?");
 				statement.setString(1, persona.getEmail());
 				statement.setLong(2, persona.getTelefono());				
 				statement.setString(3, persona.getDescripcion());

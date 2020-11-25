@@ -7,11 +7,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import entities.Domicilio;
 import exceptions.DataException;
 
@@ -198,6 +196,40 @@ public class DomicilioRepository {
 			DataBaseConnection.closePreparedStatement(statement);
 			DataBaseConnection.closeConnection(connection);
 		}
+	}
+	
+	
+	/**
+	 * Metodo que actualiza un registro de la base de datos
+	 * @param domicilio
+	 * @return
+	 * @throws Exception
+	 */
+	
+	public Domicilio update(Domicilio domicilio) throws Exception {
+		Connection connection = null;
+		PreparedStatement statement = null;
+		ResultSet resultSet = null;
+		try {
+			connection = DataBaseConnection.getConnection();
+			statement = connection.prepareStatement("update domicilios set calle = ?, set numero = ?, set piso = ?, set departamento = ? WHERE id = ?");
+			statement.setString(1, domicilio.getCalle());
+			statement.setString(2, domicilio.getNumero());				
+			statement.setString(3, domicilio.getPiso());
+			statement.setString(4, domicilio.getDepartamento());				
+			statement.setLong(5, domicilio.getId());
+			
+			int row = statement.executeUpdate();
+			domicilio = this.findById(domicilio.getId());
+		} catch (SQLException e) {
+			logger.log(Level.ERROR, e.getMessage());
+			throw e;
+		} finally {
+			DataBaseConnection.closeResultSet(resultSet);
+			DataBaseConnection.closePreparedStatement(statement);
+			DataBaseConnection.closeConnection(connection);
+		}
+		return domicilio;
 	}
 	
 }

@@ -1,18 +1,13 @@
 package data;
 
-import java.sql.Blob;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import entities.TipoHabitacion;
 import exceptions.DataException;
 
@@ -119,6 +114,42 @@ public class TipoHabitacionRepository {
 		}
 		return tipoHabitacion;
 	}
+	
+	
+	/**
+	 * Metodo que actualiza un registro de la base de datos
+	 * @param tipoHabitacion
+	 * @return
+	 * @throws Exception
+	 */
+	
+	public TipoHabitacion update(TipoHabitacion tipoHabitacion) throws Exception {
+		Connection connection = null;
+		PreparedStatement statement = null;
+		ResultSet resultSet = null;
+		try {
+			connection = DataBaseConnection.getConnection();
+			statement = connection.prepareStatement("update tipoHabitaciones set descripcion = ?, set capacidad = ?, set foto = ?, set denominacion = ?, set precioPorDia = ? WHERE id = ?");
+			statement.setString(1, tipoHabitacion.getDescripcion());
+			statement.setInt(2, tipoHabitacion.getCapacidad());				
+			statement.setBlob(3, tipoHabitacion.getFoto());
+			statement.setString(4, tipoHabitacion.getDenominacion());
+			statement.setFloat(5, tipoHabitacion.getPrecioPorDia());
+			statement.setLong(6, tipoHabitacion.getId());
+			
+			int row = statement.executeUpdate();
+			tipoHabitacion = this.findById(tipoHabitacion.getId());
+		} catch (SQLException e) {
+			logger.log(Level.ERROR, e.getMessage());
+			throw e;
+		} finally {
+			DataBaseConnection.closeResultSet(resultSet);
+			DataBaseConnection.closePreparedStatement(statement);
+			DataBaseConnection.closeConnection(connection);
+		}
+		return tipoHabitacion;
+	}
+	
 	
 	/**
 	 * Metodo que elimina un registro de la base de datos por su id

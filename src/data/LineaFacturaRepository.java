@@ -7,11 +7,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import entities.LineaFactura;
 import exceptions.DataException;
 
@@ -143,6 +141,39 @@ public class LineaFacturaRepository {
 		}
 		return lineaFactura;
 	}
+	
+	
+	/**
+	 * Metodo que actualiza un registro de la base de datos
+	 * @param lineaFactura
+	 * @return
+	 * @throws Exception
+	 */
+	
+	public LineaFactura update(LineaFactura lineaFactura) throws Exception {
+		Connection connection = null;
+		PreparedStatement statement = null;
+		ResultSet resultSet = null;
+		try {
+			connection = DataBaseConnection.getConnection();
+			statement = connection.prepareStatement("update lineaFacturas set cantidad = ?, set monto = ? WHERE id = ?");
+			statement.setInt(1, lineaFactura.getCantidad());
+			statement.setFloat(2, lineaFactura.getMonto());				
+			statement.setLong(3, lineaFactura.getId());
+			
+			int row = statement.executeUpdate();
+			lineaFactura = this.findById(lineaFactura.getId());
+		} catch (SQLException e) {
+			logger.log(Level.ERROR, e.getMessage());
+			throw e;
+		} finally {
+			DataBaseConnection.closeResultSet(resultSet);
+			DataBaseConnection.closePreparedStatement(statement);
+			DataBaseConnection.closeConnection(connection);
+		}
+		return lineaFactura;
+	}
+	
 	
 	/**
 	 * Metodo que elimina un registro de la base de datos por su id

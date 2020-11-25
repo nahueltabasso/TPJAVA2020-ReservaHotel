@@ -5,11 +5,9 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import entities.Salon;
 import exceptions.DataException;
 
@@ -116,6 +114,42 @@ private Logger logger = LogManager.getLogger(getClass());
 		}
 		return salon;
 	}
+	
+	
+	/**
+	 * Metodo que actualiza un registro de la base de datos
+	 * @param salon
+	 * @return
+	 * @throws Exception
+	 */
+	
+	public Salon update(Salon salon) throws Exception {
+		Connection connection = null;
+		PreparedStatement statement = null;
+		ResultSet resultSet = null;
+		try {
+			connection = DataBaseConnection.getConnection();
+			statement = connection.prepareStatement("update salones set capacidad = ?, set nombreSalon = ?, set descripcion = ?, set foto = ?, set precioPorDia = ? WHERE id = ?");
+			statement.setInt(1, salon.getCapacidad());
+			statement.setString(2, salon.getNombreSalon());				
+			statement.setString(3, salon.getDescripcion());
+			statement.setBlob(4, salon.getFoto());
+			statement.setFloat(5,  salon.getPrecioPorDia());
+			statement.setLong(6, salon.getId());
+			
+			int row = statement.executeUpdate();
+			salon = this.findById(salon.getId());
+		} catch (SQLException e) {
+			logger.log(Level.ERROR, e.getMessage());
+			throw e;
+		} finally {
+			DataBaseConnection.closeResultSet(resultSet);
+			DataBaseConnection.closePreparedStatement(statement);
+			DataBaseConnection.closeConnection(connection);
+		}
+		return salon;
+	}
+	
 	
 	/**
 	 * Metodo que elimina un registro de la base de datos por su id

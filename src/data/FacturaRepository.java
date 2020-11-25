@@ -7,11 +7,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import entities.Factura;
 import exceptions.DataException;
 
@@ -118,11 +116,11 @@ public class FacturaRepository {
 												  + "values (?,?,?,?,?)", PreparedStatement.RETURN_GENERATED_KEYS);
 			// Pasamos los parametros para la query nativa
 			statement.setLong(1, factura.getNumeroFactura());
-			statement.setFloat(4, factura.getMonto());
-			statement.setDate(5, new Date(factura.getFechaCreacion().getTime()));
+			statement.setFloat(2, factura.getMonto());
+			statement.setDate(3, new Date(factura.getFechaCreacion().getTime()));
 			// Fecha de eliminacion de factura se guarda como null
-			statement.setNull(6, java.sql.Types.DATE);
-			statement.setLong(7, factura.getTarjeta().getId());
+			statement.setNull(4, java.sql.Types.DATE);
+			statement.setLong(5, factura.getTarjeta().getId());
 			
 			statement.executeUpdate();
 			resultSet = statement.getGeneratedKeys();
@@ -140,6 +138,38 @@ public class FacturaRepository {
 			DataBaseConnection.closePreparedStatement(statement);
 			DataBaseConnection.closeConnection(connection);
 			
+		}
+		return factura;
+	}
+	
+	
+	/**
+	 * Metodo que actualiza un registro de la base de datos
+	 * @param factura
+	 * @return
+	 * @throws Exception
+	 */
+	
+	public Factura update(Factura factura) throws Exception {
+		Connection connection = null;
+		PreparedStatement statement = null;
+		ResultSet resultSet = null;
+		try {
+			connection = DataBaseConnection.getConnection();
+			statement = connection.prepareStatement("update facturas set numeroFactura = ?, set monto = ? WHERE id = ?");
+			statement.setLong(1, factura.getNumeroFactura());
+			statement.setFloat(2, factura.getMonto());				
+			statement.setLong(3, factura.getId());
+			
+			int row = statement.executeUpdate();
+			factura = this.findById(factura.getId());
+		} catch (SQLException e) {
+			logger.log(Level.ERROR, e.getMessage());
+			throw e;
+		} finally {
+			DataBaseConnection.closeResultSet(resultSet);
+			DataBaseConnection.closePreparedStatement(statement);
+			DataBaseConnection.closeConnection(connection);
 		}
 		return factura;
 	}
