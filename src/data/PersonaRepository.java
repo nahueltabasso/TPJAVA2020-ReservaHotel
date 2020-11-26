@@ -25,6 +25,8 @@ public class PersonaRepository {
 
 	private Persona buildPersona(ResultSet rs) throws Exception {
 		Persona persona = new Persona();
+		Rol rol = new Rol();
+		Domicilio domicilio = new Domicilio();
 		try {
 			persona.setId(rs.getLong("id"));
 			persona.setNombre(rs.getString("nombre"));
@@ -40,10 +42,10 @@ public class PersonaRepository {
 			persona.setSueldoMensual(rs.getDouble("sueldoMensual"));
 			persona.setDescripcion(rs.getString("descripcion"));
 			persona.setLegajo(rs.getLong("legajo"));
-			Rol rol = rolRepository.findById(rs.getLong("idRol"));
+			rol = rolRepository.findById(rs.getLong("idRol"));
 			persona.setRol(rol);
-			List<Domicilio> domicilioList = domicilioRepository.findDomiciliosByIdPersona(rs.getLong("id"));
-			persona.setDomicilioList(domicilioList);
+			domicilio = domicilioRepository.findDomicilioByIdPersona(rs.getLong("id"));
+			persona.setDomicilio(domicilio);
 		} catch (Exception e) {
 			logger.log(Level.ERROR, e.getMessage());
 		}
@@ -221,7 +223,7 @@ public class PersonaRepository {
 				statement.setLong(14, persona.getLegajo());
 			}
 			statement.setLong(15, persona.getRol().getId());
-			statement.setLong(16, 1L);
+			statement.setLong(16, persona.getDomicilio().getId());
 
 			statement.executeUpdate();
 			resultSet = statement.getGeneratedKeys();
