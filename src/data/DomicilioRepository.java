@@ -7,11 +7,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import entities.Domicilio;
 import exceptions.DataException;
 
@@ -75,33 +73,32 @@ public class DomicilioRepository {
 	}
 	
 	/**
-	 * Metodo que retorna una lista de domicilios segun la persona
-	 * @param idLocalidad
+	 * Metodo que retorna un domicilio segun el id de la persona
+	 * @param idPersona
 	 * @return
+	 * @throws DataException 
 	 */
-	public List<Domicilio> findDomiciliosByIdPersona(Long idPersona) {
+	public Domicilio findDomicilioByIdPersona(Long idPersona) throws DataException {
 		Connection connection = null;
 		PreparedStatement statement = null;
 		ResultSet resultSet = null;
-		List<Domicilio> domicilioList = new ArrayList<Domicilio>();
+		Domicilio domicilio = new Domicilio();
 		try {
 			connection = DataBaseConnection.getConnection();
 			statement = connection.prepareStatement("select d.id, d.calle, d.numero, d.piso, d.departamento, d.fechaCreacion, d.fechaEliminacion, d.idLocalidad from domicilios d inner join personas on personas.idDomicilio = d.id where personas.id = ?");
 			statement.setLong(1, idPersona);
-			
 			resultSet = statement.executeQuery();
-			while (resultSet.next()) {
-				Domicilio domicilio = buildDomicilio(resultSet);
-				domicilioList.add(domicilio);
-			}
+			domicilio = buildDomicilio(resultSet);
 		} catch (SQLException e) {
+			logger.log(Level.ERROR, e.getMessage());
 			e.printStackTrace();
+			throw new DataException(null, "Ocurrio un error en la base de datos, contactar con el Administrador del Sistema", Level.ERROR);
 		} finally {
 			DataBaseConnection.closeResultSet(resultSet);
 			DataBaseConnection.closePreparedStatement(statement);
 			DataBaseConnection.closeConnection(connection);
 		}
-		return domicilioList;
+		return domicilio;
 	}
 	
 	/**
@@ -198,6 +195,40 @@ public class DomicilioRepository {
 			DataBaseConnection.closePreparedStatement(statement);
 			DataBaseConnection.closeConnection(connection);
 		}
+	}
+	
+	
+	/**
+	 * Metodo que actualiza un registro de la base de datos
+	 * @param domicilio
+	 * @return
+	 * @throws Exception
+	 */
+	
+	public Domicilio update(Domicilio domicilio) throws Exception {
+		Connection connection = null;
+		PreparedStatement statement = null;
+		ResultSet resultSet = null;
+		try {
+			connection = DataBaseConnection.getConnection();
+			statement = connection.prepareStatement("update domicilios set calle = ?, set numero = ?, set piso = ?, set departamento = ? WHERE id = ?");
+			statement.setString(1, domicilio.getCalle());
+			statement.setString(2, domicilio.getNumero());				
+			statement.setString(3, domicilio.getPiso());
+			statement.setString(4, domicilio.getDepartamento());				
+			statement.setLong(5, domicilio.getId());
+			
+			int row = statement.executeUpdate();
+			domicilio = this.findById(domicilio.getId());
+		} catch (SQLException e) {
+			logger.log(Level.ERROR, e.getMessage());
+			throw e;
+		} finally {
+			DataBaseConnection.closeResultSet(resultSet);
+			DataBaseConnection.closePreparedStatement(statement);
+			DataBaseConnection.closeConnection(connection);
+		}
+		return domicilio;
 	}
 	
 }

@@ -7,13 +7,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import entities.Tarjeta;
-
 import exceptions.DataException;
 
 public class TarjetaRepository {
@@ -171,4 +168,37 @@ public class TarjetaRepository {
 		}
 	}
 
+	
+	/**
+	 * Metodo que actualiza un registro de la base de datos
+	 * @param tarjeta
+	 * @return
+	 * @throws Exception
+	 */
+	
+	public Tarjeta update(Tarjeta tarjeta) throws Exception {
+		Connection connection = null;
+		PreparedStatement statement = null;
+		ResultSet resultSet = null;
+		try {
+			connection = DataBaseConnection.getConnection();
+			statement = connection.prepareStatement("update tarjetas set numeroTarjeta = ?, fechaVencimiento = ?, set nombreTarjeta = ?, set monto = ? WHERE id = ?");
+			statement.setLong(1, tarjeta.getNumeroTarjeta());
+			statement.setDate(2, new Date(tarjeta.getFechaVencimiento().getTime()));
+			statement.setString(3, tarjeta.getNombreTarjeta());
+			statement.setFloat(4, tarjeta.getMonto());				
+			statement.setLong(5, tarjeta.getId());
+			
+			int row = statement.executeUpdate();
+			tarjeta = this.findById(tarjeta.getId());
+		} catch (SQLException e) {
+			logger.log(Level.ERROR, e.getMessage());
+			throw e;
+		} finally {
+			DataBaseConnection.closeResultSet(resultSet);
+			DataBaseConnection.closePreparedStatement(statement);
+			DataBaseConnection.closeConnection(connection);
+		}
+		return tarjeta;
+	}
 }

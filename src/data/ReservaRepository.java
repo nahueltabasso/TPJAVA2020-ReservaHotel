@@ -7,12 +7,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import entities.Persona;
 import entities.Reserva;
 import exceptions.DataException;
 
@@ -296,7 +293,41 @@ public class ReservaRepository {
 		return reserva;
 	}
 	
-	// TODO falta el método update
+
+	/**
+	 * Metodo que actualiza un registro de la base de datos
+	 * @param reserva
+	 * @return
+	 * @throws Exception
+	 */
+	
+	public Reserva update(Reserva reserva) throws Exception {
+		Connection connection = null;
+		PreparedStatement statement = null;
+		ResultSet resultSet = null;
+		try {
+			connection = DataBaseConnection.getConnection();
+			statement = connection.prepareStatement("update reservas set fechaReserva = ?, set fechaCancelacion = ?, set cantDias = ?, set fechaEntrada = ?, set fechaSalida = ? WHERE id = ?");
+			statement.setDate(1, new Date(reserva.getFechaReserva().getTime()));
+			statement.setDate(2, new Date(reserva.getFechaCancelacion().getTime()));
+			statement.setInt(3, reserva.getCantDias());				
+			statement.setDate(4, new Date(reserva.getFechaEntrada().getTime()));
+			statement.setDate(5, new Date(reserva.getFechaSalida().getTime()));
+			statement.setLong(6, reserva.getId());
+			
+			int row = statement.executeUpdate();
+			reserva = this.findById(reserva.getId());
+		} catch (SQLException e) {
+			logger.log(Level.ERROR, e.getMessage());
+			throw e;
+		} finally {
+			DataBaseConnection.closeResultSet(resultSet);
+			DataBaseConnection.closePreparedStatement(statement);
+			DataBaseConnection.closeConnection(connection);
+		}
+		return reserva;
+	}
+	
 	
 	/**
 	 * Metodo que elimina un registro de la base de datos por su id

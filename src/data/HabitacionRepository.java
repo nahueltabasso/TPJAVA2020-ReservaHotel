@@ -7,11 +7,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import entities.Habitacion;
 import exceptions.DataException;
 
@@ -141,6 +139,38 @@ public class HabitacionRepository {
 		}
 		return habitacion;
 	}
+	
+	
+	/**
+	 * Metodo que actualiza un registro de la base de datos
+	 * @param habitacion
+	 * @return
+	 * @throws Exception
+	 */
+	
+	public Habitacion update(Habitacion habitacion) throws Exception {
+		Connection connection = null;
+		PreparedStatement statement = null;
+		ResultSet resultSet = null;
+		try {
+			connection = DataBaseConnection.getConnection();
+			statement = connection.prepareStatement("update habitaciones set numeroHabitacion = ? WHERE id = ?");
+			statement.setInt(1, habitacion.getNumeroHabitacion());
+			statement.setLong(2, habitacion.getId());
+			
+			int row = statement.executeUpdate();
+			habitacion = this.findById(habitacion.getId());
+		} catch (SQLException e) {
+			logger.log(Level.ERROR, e.getMessage());
+			throw e;
+		} finally {
+			DataBaseConnection.closeResultSet(resultSet);
+			DataBaseConnection.closePreparedStatement(statement);
+			DataBaseConnection.closeConnection(connection);
+		}
+		return habitacion;
+	}
+	
 	
 	/**
 	 * Metodo que elimina un registro de la base de datos por su id
