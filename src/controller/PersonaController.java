@@ -37,7 +37,11 @@ public class PersonaController {
 	
 	public Persona getById(Long id) throws Exception {
 		logger.log(Level.INFO, "Ingresa a getById()");
-		return personaRepository.findById(id);
+		Persona personaDb = personaRepository.findById(id);
+		if (personaDb == null) {
+			throw new Exception("No existe la persona en la base de datos!");
+		}
+		return personaDb;
 	}
 	
 	public Persona getByDocumento(Persona persona) throws Exception {
@@ -58,10 +62,10 @@ public class PersonaController {
 		personaRepository.delete(id);
 	}
 	
-	public Persona actualizarPersona(Persona persona) throws Exception {
+	public Persona actualizarPersona(Long id, Persona persona) throws Exception {
 		logger.log(Level.INFO, "Ingresa a actualizarPersona()");
 		preValidation(persona, false);
-		return actualizar(persona);
+		return actualizar(id, persona);
 	}
 	
 	private void preValidation(Persona persona, boolean isCreate) throws Exception {
@@ -80,6 +84,7 @@ public class PersonaController {
 		}
 	}
 	
+	@SuppressWarnings("unused")
 	private String generarHashPassword(String password) throws UnsupportedEncodingException {
 		logger.log(Level.INFO, "Ingresa a generarHashPassword()");
 		String passwordHash = Hash.getPasswordHashSHA512(password);
@@ -141,11 +146,15 @@ public class PersonaController {
 		persona.setFechaEliminacion(null);
 	}
 	
-	private Persona actualizar(Persona persona) throws Exception {
+	private Persona actualizar(Long id, Persona persona) throws Exception {
 		logger.log(Level.INFO, "Ingresa a actualizar()");
 
 		// Obtenemos la persona de la BD por su id
-		Persona personaDb = personaRepository.findById(persona.getId());
+		Persona personaDb = personaRepository.findById(id);
+		
+		if (personaDb == null) {
+			throw new Exception("No existe la persona en la base de datos!");
+		}
 		
 		if (!Utils.validaEmail(persona.getEmail())) {
 			throw new Exception("Formato de email no valido!");

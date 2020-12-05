@@ -18,4 +18,13 @@ public class EstadoReservaController {
 		logger.log(Level.INFO, "Ingresa a getAll()");
 		return estadoReservaRepository.findAll();
 	}
+	
+	public EstadoReserva getByDescripcion(String descripcion) throws Exception {
+		logger.log(Level.INFO, "Ingresa a getByDescripcion()");
+		if (!descripcion.equalsIgnoreCase(EstadoReserva.ACTIVA) && !descripcion.equalsIgnoreCase(EstadoReserva.RESERVADA) &&
+			!descripcion.equalsIgnoreCase(EstadoReserva.ANULADA) && !descripcion.equalsIgnoreCase(EstadoReserva.CANCELADA)) {
+			throw new Exception("Descripcion no valida!");
+		}
+		return estadoReservaRepository.findByDescripcion(descripcion);
+	}
 }
