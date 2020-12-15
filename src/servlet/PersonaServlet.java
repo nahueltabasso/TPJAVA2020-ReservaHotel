@@ -44,14 +44,17 @@ public class PersonaServlet extends HttpServlet {
 			response.setContentType("application/json");
 		    response.setCharacterEncoding("UTF-8");
 		    response.getWriter().print(gson.toJson(personaList));
+			response.setStatus(200);
 		    response.getWriter().flush();
 		} catch (AccessDeniedException e) {
 			logger.log(Level.ERROR, e.getMessage());
 			MessageErrorResponse mensaje = new MessageErrorResponse(e.getMessage());
+			response.setStatus(401);
 			response.getWriter().print(gson.toJson(mensaje));
 		} catch (Exception e) {
 			logger.log(Level.ERROR, e.getMessage());
 			MessageErrorResponse mensaje = new MessageErrorResponse(e.getMessage());
+			response.setStatus(500);
 			response.getWriter().print(gson.toJson(mensaje));
 		}
 	}
@@ -82,15 +85,18 @@ public class PersonaServlet extends HttpServlet {
 			response.setContentType("application/json");
 		    response.setCharacterEncoding("UTF-8");
 		    response.getWriter().print(gson.toJson(personaDB));
+			response.setStatus(201);
 		    response.getWriter().flush();
 		    
 		} catch (AccessDeniedException e) {
 			logger.log(Level.ERROR, e.getMessage());
 			MessageErrorResponse mensaje = new MessageErrorResponse(e.getMessage());
+			response.setStatus(401);
 			response.getWriter().print(gson.toJson(mensaje));
 		} catch (Exception e) {
 			logger.log(Level.ERROR, e.getMessage());
 			MessageErrorResponse mensaje = new MessageErrorResponse(e.getMessage());
+			response.setStatus(500);
 			response.getWriter().print(gson.toJson(mensaje));
 		}
 	}
@@ -111,10 +117,12 @@ public class PersonaServlet extends HttpServlet {
 		} catch (AccessDeniedException e) {
 			logger.log(Level.ERROR, e.getMessage());
 			MessageErrorResponse mensaje = new MessageErrorResponse(e.getMessage());
+			response.setStatus(401);
 			response.getWriter().print(gson.toJson(mensaje));
 		} catch (Exception e) {
 			logger.log(Level.ERROR, e.getMessage());
 			MessageErrorResponse mensaje = new MessageErrorResponse(e.getMessage());
+			response.setStatus(500);
 			response.getWriter().print(gson.toJson(mensaje));
 		}
 	}
@@ -144,13 +152,15 @@ public class PersonaServlet extends HttpServlet {
 			}
 			
 			// Si llego aca implica que se cumplen con los permisos, persistimos el objeto
-			Persona personaDB = personaCtrl.actualizarPersona(persona);
+			Long id = Long.parseLong(request.getParameter("idPersona"));
+			Persona personaDB = personaCtrl.actualizarPersona(id, persona);
 			logger.log(Level.INFO, "Usuario: " + personaDB.getNombre() + " " + personaDB.getApellido() + " actualizado con exito!");
 
 			// Response
 			response.setContentType("application/json");
 		    response.setCharacterEncoding("UTF-8");
 		    response.getWriter().print(gson.toJson(personaDB));
+		    response.setStatus(201);
 		    response.getWriter().flush();
 		} catch (AccessDeniedException e) {
 			logger.log(Level.ERROR, e.getMessage());

@@ -2,7 +2,6 @@ package servlet;
 
 import java.io.IOException;
 import java.nio.file.AccessDeniedException;
-import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -16,44 +15,47 @@ import org.apache.logging.log4j.Logger;
 
 import com.google.gson.Gson;
 
-import controller.EstadoReservaController;
-import entities.EstadoReserva;
+import controller.PersonaController;
 import entities.Persona;
+import response.MessageErrorResponse;
 
-@WebServlet("/EstadoReservaList")
-public class EstadoReservaList extends HttpServlet {
+@WebServlet("/Persona")
+public class PersonaById extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
-	private EstadoReservaController estadoReservaCtrl = new EstadoReservaController();
-       
-    public EstadoReservaList() {}
+	private Logger logger = LogManager.getLogger(getClass());
+	private PersonaController personaCtrl = new PersonaController();
+	
+    public PersonaById() {}
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		Gson gson = new Gson();
-		
 		try {
 			Persona personaLogueada = (Persona) request.getSession().getAttribute("usuario");
+			
 			if (personaLogueada == null) {
-				// Excepcion 
-				throw new AccessDeniedException("Acceso denegado");
+				throw new AccessDeniedException("Acceso denegado!");
 			}
-			List<EstadoReserva> estados = estadoReservaCtrl.getAll();
+			
+			Long id = Long.parseLong(request.getParameter("idPersona"));
+			Persona persona = personaCtrl.getById(id);
 			
 			response.setContentType("application/json");
 		    response.setCharacterEncoding("UTF-8");
-		    response.getWriter().print(gson.toJson(estados));
+		    response.getWriter().print(gson.toJson(persona));
+			response.setStatus(200);
 		    response.getWriter().flush();
 		} catch (AccessDeniedException e) {
-			response.getWriter().print(e.getMessage());
-			e.printStackTrace();
+			logger.log(Level.ERROR, e.getMessage());
+			MessageErrorResponse mensaje = new MessageErrorResponse(e.getMessage());
+			response.setStatus(401);
+			response.getWriter().print(gson.toJson(mensaje));
 		} catch (Exception e) {
-			Logger logger = LogManager.getLogger(getClass());
-			logger.log(Level.ERROR, e.getMessage());			
+			logger.log(Level.ERROR, e.getMessage());
+			MessageErrorResponse mensaje = new MessageErrorResponse(e.getMessage());
+			response.setStatus(500);
+			response.getWriter().print(gson.toJson(mensaje));
 		}
-	}
-
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		doGet(request, response);
 	}
 
 }

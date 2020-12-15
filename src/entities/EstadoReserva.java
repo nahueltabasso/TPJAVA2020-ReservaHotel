@@ -4,6 +4,11 @@ import java.util.Date;
 
 public class EstadoReserva {
 
+	public static final String RESERVADA = "Reservada";
+	public static final String CANCELADA = "Cancelada";
+	public static final String ANULADA = "Anulada";
+	public static final String ACTIVA = "Activa";
+	
 	private Long id;
 	private String descripcion;
 	private Date fechaCreacion;

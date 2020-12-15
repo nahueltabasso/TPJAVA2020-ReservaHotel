@@ -20,13 +20,14 @@ import controller.EstadoReservaController;
 import entities.EstadoReserva;
 import entities.Persona;
 
-@WebServlet("/EstadoReservaList")
-public class EstadoReservaList extends HttpServlet {
+@WebServlet("/EstadoReserva")
+public class EstadoReservaByDescripcion extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
-	private EstadoReservaController estadoReservaCtrl = new EstadoReservaController();
-       
-    public EstadoReservaList() {}
+	private Logger logger = LogManager.getLogger(getClass());
+    private EstadoReservaController estadoReservaCtrl = new EstadoReservaController();
+    
+    public EstadoReservaByDescripcion() {}
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		Gson gson = new Gson();
@@ -37,23 +38,26 @@ public class EstadoReservaList extends HttpServlet {
 				// Excepcion 
 				throw new AccessDeniedException("Acceso denegado");
 			}
-			List<EstadoReserva> estados = estadoReservaCtrl.getAll();
+			String descripcion = request.getParameter("descripcion");
+
+			EstadoReserva estado = estadoReservaCtrl.getByDescripcion(descripcion);
 			
 			response.setContentType("application/json");
 		    response.setCharacterEncoding("UTF-8");
-		    response.getWriter().print(gson.toJson(estados));
+		    response.getWriter().print(gson.toJson(estado));
+		    response.setStatus(200);
 		    response.getWriter().flush();
 		} catch (AccessDeniedException e) {
 			response.getWriter().print(e.getMessage());
+			response.setStatus(401);
 			e.printStackTrace();
 		} catch (Exception e) {
 			Logger logger = LogManager.getLogger(getClass());
-			logger.log(Level.ERROR, e.getMessage());			
+			logger.log(Level.ERROR, e.getMessage());		
+			response.getWriter().print(e.getMessage());
+			response.setStatus(500);
 		}
-	}
 
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		doGet(request, response);
 	}
 
 }
