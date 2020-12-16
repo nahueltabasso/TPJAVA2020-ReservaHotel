@@ -19,7 +19,7 @@ import controller.PersonaController;
 import entities.Persona;
 import response.MessageErrorResponse;
 
-@WebServlet("/Persona")
+@WebServlet("/PersonaById")
 public class PersonaById extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
