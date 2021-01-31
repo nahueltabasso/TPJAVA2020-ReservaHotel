@@ -11,6 +11,7 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import entities.Habitacion;
+import entities.Persona;
 import exceptions.DataException;
 
 public class HabitacionRepository {
@@ -52,7 +53,7 @@ public class HabitacionRepository {
 		Habitacion habitacion = new Habitacion();
 		try {
 			connection = DataBaseConnection.getConnection();
-			statement = connection.prepareStatement("select * from tipoHabitaciones where id = ?");
+			statement = connection.prepareStatement("select * from habitaciones where id = ?");
 			statement.setLong(1, id);
 			
 			resultSet = statement.executeQuery();
@@ -69,6 +70,34 @@ public class HabitacionRepository {
 		return habitacion;
 	}
 
+	/**
+	 * Metodo que retorna una lista de todas las habitaciones
+	 * @return
+	 * @trhows Exception
+	 */
+	public List<Habitacion> findAll() {
+		Connection connection = null;
+		PreparedStatement statement = null;
+		ResultSet resultSet = null;
+		List<Habitacion> habitacionesList = new ArrayList<Habitacion>();
+		try {
+			connection = DataBaseConnection.getConnection();
+			statement = connection.prepareStatement("select * from habitaciones");
+			resultSet = statement.executeQuery();
+			while (resultSet.next()) {
+				Habitacion habitacion = buildHabitacion(resultSet);
+				habitacionesList.add(habitacion);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			DataBaseConnection.closeResultSet(resultSet);
+			DataBaseConnection.closePreparedStatement(statement);
+			DataBaseConnection.closeConnection(connection);
+		}
+		return habitacionesList;
+	}	
+	
 	/**
 	 * Metodo que retorna una lista de habitaciones segun el tipo de habitación
 	 * @param idFactura
@@ -194,6 +223,27 @@ public class HabitacionRepository {
 		}
 	}
 
+	public boolean existHabitacionByNumeroHabitacion(Habitacion habitacion) throws Exception {
+		Connection connection = null;
+		PreparedStatement statement = null;
+		ResultSet resultSet = null;
+		boolean row;
+		try {
+			connection = DataBaseConnection.getConnection();
+			statement = connection.prepareStatement("select * from habitaciones where numeroHabitacion = ? ");
+			statement.setInt(1, habitacion.getNumeroHabitacion());
+			resultSet = statement.executeQuery();
+			row = resultSet.isBeforeFirst();
+		} catch (SQLException e) {
+			logger.log(Level.ERROR, e.getMessage());
+			throw e;
+		} finally {
+			DataBaseConnection.closeConnection(connection);
+			DataBaseConnection.closePreparedStatement(statement);
+			DataBaseConnection.closeResultSet(resultSet);
+		}
 
+		return row;
+	}
 
 }

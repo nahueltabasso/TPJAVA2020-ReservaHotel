@@ -6,6 +6,8 @@ import java.sql.Blob;
 
 public class TipoHabitacion {
 	
+	public static final Long SIMPLE = (long) 1;
+	
 	private Long id;
 	private String descripcion;
 	private Integer capacidad;

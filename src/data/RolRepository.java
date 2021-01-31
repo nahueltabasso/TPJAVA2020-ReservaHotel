@@ -16,7 +16,7 @@ public class RolRepository {
 		rol.setId(rs.getLong("id"));
 		rol.setNombreRol(rs.getString("nombreRol"));
 		rol.setFechaCreacion(rs.getDate("fechaCreacion"));
-		rol.setFechaEliminacion(rs.getDate("fechaEliminacion"));
+		rol.setFechaEliminacion(rs.getDate("fechaEliminacion") != null ? rs.getDate("fechaEliminacion") : null);
 		return rol;
 	}
 	
