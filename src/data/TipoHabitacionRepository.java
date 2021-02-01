@@ -5,9 +5,14 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import entities.Habitacion;
 import entities.TipoHabitacion;
 import exceptions.DataException;
 
@@ -69,6 +74,33 @@ public class TipoHabitacionRepository {
 		return tipoHabitacion;
 	}
 
+	/**
+	 * Metodo que retorna una lista de tipoHabitacion
+	 * @param 
+	 * @return
+	 */
+	public List<TipoHabitacion> findAll() {
+		Connection connection = null;
+		PreparedStatement statement = null;
+		ResultSet resultSet = null;
+		List<TipoHabitacion> tipoHabitacionesList = new ArrayList<TipoHabitacion>();
+		try {
+			connection = DataBaseConnection.getConnection();
+			statement = connection.prepareStatement("select * from tipoHabitaciones");
+			resultSet = statement.executeQuery();
+			while (resultSet.next()) {
+				TipoHabitacion tipoHabitacion = buildTipoHabitacion(resultSet);
+				tipoHabitacionesList.add(tipoHabitacion);
+			}
+		} catch(SQLException e) {
+			e.printStackTrace();
+		} finally {
+			DataBaseConnection.closeResultSet(resultSet);
+			DataBaseConnection.closePreparedStatement(statement);
+			DataBaseConnection.closeConnection(connection);
+		}
+		return tipoHabitacionesList;
+	}
 		
 	
 	/**
@@ -173,6 +205,29 @@ public class TipoHabitacionRepository {
 		}
 	}
 
+	// Devuelve true si ya existe la denominación o descripción de un tipo de habitación
+	public boolean existTipoHabitacion (TipoHabitacion tipoHabitacion) throws Exception {
+		Connection connection = null;
+		PreparedStatement statement = null;
+		ResultSet resultSet = null;
+		boolean row;
+		try {
+			connection = DataBaseConnection.getConnection();
+			statement = connection.prepareStatement("select * from tipoHabitaciones where denominacion = ? or descripcion = ?");
+			statement.setString(1, tipoHabitacion.getDenominacion());
+			statement.setString(2, tipoHabitacion.getDescripcion());
+			resultSet = statement.executeQuery();
+			row = resultSet.isBeforeFirst();
+		} catch (SQLException e) {
+			logger.log(Level.ERROR, e.getMessage());
+			throw e;
+		} finally {
+			DataBaseConnection.closeConnection(connection);
+			DataBaseConnection.closePreparedStatement(statement);
+			DataBaseConnection.closeResultSet(resultSet);
+		}
 
+		return row;
+	}
 
 }

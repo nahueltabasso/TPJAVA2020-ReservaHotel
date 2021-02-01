@@ -1,14 +1,11 @@
 package controller;
 
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import data.HabitacionRepository;
 import data.TipoHabitacionRepository;
 import entities.Habitacion;
@@ -111,6 +108,6 @@ public class HabitacionController {
 			throw new Exception("Numero de habitación no valido!");
 		}
 		
-		return habitacionRepository.update(habitacionDb);
+		return habitacionRepository.update(habitacion);
 	}
 }
