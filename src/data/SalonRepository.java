@@ -19,7 +19,6 @@ public class SalonRepository {
 
 private Logger logger = LogManager.getLogger(getClass());
 	
-	
 	/**
 	 * Metodo que construye el objeto Salon
 	 * @param resultSet
@@ -33,13 +32,12 @@ private Logger logger = LogManager.getLogger(getClass());
 			salon.setNombreSalon(resultSet.getNString("nombreSalon"));
 			salon.setDescripcion(resultSet.getNString("descripcion"));
 			salon.setFoto(resultSet.getBlob("foto"));
-			salon.setPrecioPorDia(resultSet.getFloat("precioPorDia"));
+			salon.setPrecioPorDia(resultSet.getDouble("precioPorDia"));
 			salon.setFechaCreacion(resultSet.getDate("fechaCreacion"));
 			salon.setFechaEliminacion(resultSet.getDate("fechaEliminacion"));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-	
 		return salon;
 	}
 		
@@ -121,7 +119,7 @@ private Logger logger = LogManager.getLogger(getClass());
 			statement.setString(2, salon.getNombreSalon());
 			statement.setString(3, salon.getDescripcion());
 			statement.setBlob(4, salon.getFoto());
-			statement.setFloat(5, salon.getPrecioPorDia());
+			statement.setDouble(5, salon.getPrecioPorDia());
 			statement.setDate(6, new Date(salon.getFechaCreacion().getTime()));
 			// Fecha de eliminacion de salon se guarda como null
 			statement.setNull(7, java.sql.Types.DATE);
@@ -160,12 +158,12 @@ private Logger logger = LogManager.getLogger(getClass());
 		ResultSet resultSet = null;
 		try {
 			connection = DataBaseConnection.getConnection();
-			statement = connection.prepareStatement("update salones set capacidad = ?, set nombreSalon = ?, set descripcion = ?, set foto = ?, set precioPorDia = ? WHERE id = ?");
+			statement = connection.prepareStatement("update salones set capacidad = ?, nombreSalon = ?, descripcion = ?, foto = ?, precioPorDia = ? WHERE id = ?");
 			statement.setInt(1, salon.getCapacidad());
 			statement.setString(2, salon.getNombreSalon());				
 			statement.setString(3, salon.getDescripcion());
 			statement.setBlob(4, salon.getFoto());
-			statement.setFloat(5,  salon.getPrecioPorDia());
+			statement.setDouble(5,  salon.getPrecioPorDia());
 			statement.setLong(6, salon.getId());
 			
 			int row = statement.executeUpdate();

@@ -10,7 +10,7 @@ public class Salon {
 	private String nombreSalon;
 	private String descripcion;
 	private Integer capacidad;
-	private Float precioPorDia;
+	private Double precioPorDia;
 	
 	//FIXME Ver si está bien
 	private Blob foto;
@@ -43,10 +43,10 @@ public class Salon {
 	public void setCapacidad(Integer capacidad) {
 		this.capacidad = capacidad;
 	}
-	public Float getPrecioPorDia() {
+	public Double getPrecioPorDia() {
 		return precioPorDia;
 	}
-	public void setPrecioPorDia(Float precioPorDia) {
+	public void setPrecioPorDia(Double precioPorDia) {
 		this.precioPorDia = precioPorDia;
 	}
 	public Blob getFoto() {

@@ -47,7 +47,7 @@ public class SalonController {
 	
 	public Salon actualizarSalon(Long id, Salon salon) throws Exception {
 		logger.log(Level.INFO, "Ingresa a actualizarSalon()");
-		preValidation(salon, false);
+		preValidation(salon, true);
 		return actualizar(id, salon);
 	}
 	
@@ -67,7 +67,7 @@ public class SalonController {
 
 				
 		// Validamos que el atributo precio no tenga letras
-		if (Utils.cadContainsLetters(salon.getPrecioPorDia().toString())) {
+		if (!Utils.validaPrecio(salon.getPrecioPorDia().toString())) {
 			throw new Exception("Precio no válido! Ingrese solamente dígitos.");
 		}
 		
@@ -90,8 +90,23 @@ public class SalonController {
 		if (salonDB == null) {
 			throw new Exception("No existe el salón en la base de datos!");
 		}
+		
+		// Validamos que el atributo precio no tenga letras
+		if (!Utils.validaPrecio(salon.getPrecioPorDia().toString())) {
+			throw new Exception("Precio no válido! Ingrese solamente dígitos.");
+		}
+		
+		// Validamos que el atributo capacidad no tenga letras
+		if (Utils.cadContainsLetters(salon.getCapacidad().toString())) {
+			throw new Exception("Capacidad no válida! Ingrese solamente dígitos.");
+		}
+		
+		salonDB.setCapacidad(salon.getCapacidad());
+		salonDB.setDescripcion(salon.getDescripcion());
+		salonDB.setNombreSalon(salon.getNombreSalon());
+		salonDB.setPrecioPorDia(salon.getPrecioPorDia());
 						
-		return salonRepository.update(salon);
+		return salonRepository.update(salonDB);
 	}
 	
 }

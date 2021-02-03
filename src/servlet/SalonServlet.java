@@ -59,6 +59,7 @@ public class SalonServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		Gson gson = new Gson();
 		try {
+			request.setCharacterEncoding("UTF-8");
 			String payloadRequest = JsonToJavaObject.getBody(request);
 			
 			Salon salon = new Salon();
