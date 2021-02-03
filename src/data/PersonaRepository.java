@@ -44,7 +44,7 @@ public class PersonaRepository {
 			persona.setLegajo(rs.getLong("legajo"));
 			rol = rolRepository.findById(rs.getLong("idRol"));
 			persona.setRol(rol);
-			domicilio = domicilioRepository.findDomicilioByIdPersona(rs.getLong("id"));
+			domicilio = domicilioRepository.findById(rs.getLong("idDomicilio"));
 			persona.setDomicilio(domicilio);
 		} catch (Exception e) {
 			logger.log(Level.ERROR, e.getMessage());
@@ -345,7 +345,7 @@ public class PersonaRepository {
 				statement.setLong(2, persona.getTelefono());				
 				statement.setLong(3, persona.getId());
 			} else {
-				statement = connection.prepareStatement("update personas set email = ?, set telefono = ?, set descripcion = ?, set sueldoMensual = ? WHERE id = ?");
+				statement = connection.prepareStatement("update personas set email = ?, telefono = ?, descripcion = ?, sueldoMensual = ? WHERE id = ?");
 				statement.setString(1, persona.getEmail());
 				statement.setLong(2, persona.getTelefono());				
 				statement.setString(3, persona.getDescripcion());

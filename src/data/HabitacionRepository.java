@@ -17,7 +17,7 @@ import exceptions.DataException;
 public class HabitacionRepository {
 	
 	private Logger logger = LogManager.getLogger(getClass());
-	private TipoHabitacionRepository tipoHabitacionRepository;
+	private TipoHabitacionRepository tipoHabitacionRepository = new TipoHabitacionRepository();
 	
 	/**
 	 * Metodo que construye el objeto Habitacion
@@ -36,7 +36,6 @@ public class HabitacionRepository {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-	
 		return habitacion;
 	}
 		
@@ -141,7 +140,7 @@ public class HabitacionRepository {
 		try {
 			connection = DataBaseConnection.getConnection();
 			statement = connection.prepareStatement("insert into habitaciones(numeroHabitacion, fechaCreacion, fechaEliminacion, idTipoHabitacion) "
-												  + "values (?,?,?,?,?)", PreparedStatement.RETURN_GENERATED_KEYS);
+												  + "values (?,?,?,?)", PreparedStatement.RETURN_GENERATED_KEYS);
 			// Pasamos los parametros para la query nativa
 			statement.setInt(1, habitacion.getNumeroHabitacion());
 			statement.setDate(2, new Date(habitacion.getFechaCreacion().getTime()));
@@ -164,7 +163,6 @@ public class HabitacionRepository {
 			DataBaseConnection.closeResultSet(resultSet);
 			DataBaseConnection.closePreparedStatement(statement);
 			DataBaseConnection.closeConnection(connection);
-			
 		}
 		return habitacion;
 	}
@@ -242,7 +240,6 @@ public class HabitacionRepository {
 			DataBaseConnection.closePreparedStatement(statement);
 			DataBaseConnection.closeResultSet(resultSet);
 		}
-
 		return row;
 	}
 

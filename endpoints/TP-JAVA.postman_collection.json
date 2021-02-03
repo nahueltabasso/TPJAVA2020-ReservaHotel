@@ -12,7 +12,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"nombre\": \"nombreTest\",\r\n    \"apellido\": \"apellidoTest\",\r\n    \"email\": \"emailTest@gmail.com\",\r\n    \"password\": \"abc123456\",\r\n    \"nroDocumento\": 12345678,\r\n    \"tipoDocumento\": \"DNI\",\r\n    \"cuit\": \"20123456789\",\r\n    \"telefono\": 4444444,\r\n    \"genero\": \"M\",\r\n    \"rol\": {\r\n        \"id\": 3,\r\n        \"nombreRol\": \"Cliente\"\r\n    }\r\n}\r\n\r\n\r\n\r\n",
+					"raw": "{\r\n    \"nombre\": \"nombreTesting\",\r\n    \"apellido\": \"apellidoTesting\",\r\n    \"email\": \"emailTesting@gmail.com\",\r\n    \"password\": \"abc123456\",\r\n    \"nroDocumento\": 33445566,\r\n    \"tipoDocumento\": \"DNI\",\r\n    \"cuit\": \"27334455669\",\r\n    \"telefono\": 47844434,\r\n    \"genero\": \"F\",\r\n    \"rol\": {\r\n        \"id\": 3,\r\n        \"nombreRol\": \"Cliente\"\r\n    },\r\n    \"domicilio\": {\r\n        \"calle\": \"Paris\",\r\n        \"numero\": \"1341\",\r\n        \"localidad\": {\r\n            \"id\": 1\r\n        }\r\n    }\r\n}\r\n\r\n\r\n\r\n",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -129,7 +129,292 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "RolList",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/utn-tp-web-hotel/RolList",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"utn-tp-web-hotel",
+						"RolList"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ActualizarPersona",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\": 9,\r\n    \"nombre\": \"nombre_Test\",\r\n    \"apellido\": \"apellido_Test\",\r\n    \"email\": \"emailTest5@gmail.com\",\r\n    \"password\": \"abc123456\",\r\n    \"nroDocumento\": 12345679,\r\n    \"tipoDocumento\": \"DNI\",\r\n    \"cuit\": \"20123456799\",\r\n    \"telefono\": 4444433,\r\n    \"genero\": \"M\",\r\n    \"rol\": {\r\n        \"id\": 3,\r\n        \"nombreRol\": \"Cliente\"\r\n    }\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/utn-tp-web-hotel/Persona?idPersona=9",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"utn-tp-web-hotel",
+						"Persona"
+					],
+					"query": [
+						{
+							"key": "idPersona",
+							"value": "9"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ListarEstadosReserva",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/utn-tp-web-hotel/EstadoReservaList",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"utn-tp-web-hotel",
+						"EstadoReservaList"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "EstadoReservaByDescripcion",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/utn-tp-web-hotel/EstadoReservaByDescripcion?descripcion=Activa",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"utn-tp-web-hotel",
+						"EstadoReservaByDescripcion"
+					],
+					"query": [
+						{
+							"key": "descripcion",
+							"value": "Activa"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ListarHabitaciones",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/utn-tp-web-hotel/Habitacion",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"utn-tp-web-hotel",
+						"Habitacion"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "EliminarTipoHabitacion",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/utn-tp-web-hotel/TipoHabitacion?idTipoHabitacion=5",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"utn-tp-web-hotel",
+						"TipoHabitacion"
+					],
+					"query": [
+						{
+							"key": "idTipoHabitacion",
+							"value": "5"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ListarTipoHabitaciones",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/utn-tp-web-hotel/TipoHabitacion",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"utn-tp-web-hotel",
+						"TipoHabitacion"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "EliminarHabitacion",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/utn-tp-web-hotel/Habitacion?idHabitacion=16",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"utn-tp-web-hotel",
+						"Habitacion"
+					],
+					"query": [
+						{
+							"key": "idHabitacion",
+							"value": "16"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ActualizarTipoHabitacion",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "    {\r\n        \"id\": 4,\r\n        \"descripcion\": \"Suite\",\r\n        \"capacidad\": 6,\r\n        \"denominacion\": \"Suite Principal\",\r\n        \"precioPorDia\": 10000\r\n    }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/utn-tp-web-hotel/TipoHabitacion?idTipoHabitacion=4",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"utn-tp-web-hotel",
+						"TipoHabitacion"
+					],
+					"query": [
+						{
+							"key": "idTipoHabitacion",
+							"value": "4"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CrearTipoHabitacion",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "    {\r\n        \"descripcion\": \"Prueba\",\r\n        \"capacidad\": 1,\r\n        \"denominacion\": \"Prueba\",\r\n        \"precioPorDia\": 125.00\r\n    }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/utn-tp-web-hotel/TipoHabitacion",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"utn-tp-web-hotel",
+						"TipoHabitacion"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CrearHabitacion",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "  {\r\n        \"numeroHabitacion\": 125,\r\n        \"tipoHabitacion\": {\r\n            \"id\": 1\r\n        }\r\n    }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/utn-tp-web-hotel/Habitacion",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"utn-tp-web-hotel",
+						"Habitacion"
+					]
+				}
+			},
+			"response": []
 		}
-	],
-	"protocolProfileBehavior": {}
+	]
 }

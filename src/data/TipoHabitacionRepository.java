@@ -20,7 +20,6 @@ public class TipoHabitacionRepository {
 	
 	private Logger logger = LogManager.getLogger(getClass());
 	
-	
 	/**
 	 * Metodo que construye el objeto TipoHabitacion
 	 * @param resultSet
@@ -34,13 +33,12 @@ public class TipoHabitacionRepository {
 			tipoHabitacion.setCapacidad(resultSet.getInt("capacidad"));
 			tipoHabitacion.setFoto(resultSet.getBlob("foto"));
 			tipoHabitacion.setDenominacion(resultSet.getNString("denominacion"));
-			tipoHabitacion.setPrecioPorDia(resultSet.getFloat("precioPorDia"));
+			tipoHabitacion.setPrecioPorDia(resultSet.getDouble("precioPorDia"));
 			tipoHabitacion.setFechaCreacion(resultSet.getDate("fechaCreacion"));
 			tipoHabitacion.setFechaEliminacion(resultSet.getDate("fechaEliminacion"));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-	
 		return tipoHabitacion;
 	}
 		
@@ -122,7 +120,7 @@ public class TipoHabitacionRepository {
 			statement.setInt(2, tipoHabitacion.getCapacidad());
 			statement.setBlob(3, tipoHabitacion.getFoto());
 			statement.setString(4, tipoHabitacion.getDenominacion());
-			statement.setFloat(5, tipoHabitacion.getPrecioPorDia());
+			statement.setDouble(5, tipoHabitacion.getPrecioPorDia());
 			statement.setDate(6, new Date(tipoHabitacion.getFechaCreacion().getTime()));
 			// Fecha de eliminacion de tipoHabitacion se guarda como null
 			statement.setNull(7, java.sql.Types.DATE);
@@ -161,12 +159,12 @@ public class TipoHabitacionRepository {
 		ResultSet resultSet = null;
 		try {
 			connection = DataBaseConnection.getConnection();
-			statement = connection.prepareStatement("update tipoHabitaciones set descripcion = ?, set capacidad = ?, set foto = ?, set denominacion = ?, set precioPorDia = ? WHERE id = ?");
+			statement = connection.prepareStatement("update tipoHabitaciones set descripcion = ?, capacidad = ?, foto = ?, denominacion = ?, precioPorDia = ? WHERE id = ?");
 			statement.setString(1, tipoHabitacion.getDescripcion());
 			statement.setInt(2, tipoHabitacion.getCapacidad());				
 			statement.setBlob(3, tipoHabitacion.getFoto());
 			statement.setString(4, tipoHabitacion.getDenominacion());
-			statement.setFloat(5, tipoHabitacion.getPrecioPorDia());
+			statement.setDouble(5, tipoHabitacion.getPrecioPorDia());
 			statement.setLong(6, tipoHabitacion.getId());
 			
 			int row = statement.executeUpdate();

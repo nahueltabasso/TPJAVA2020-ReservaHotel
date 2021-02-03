@@ -7,11 +7,12 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import entities.Pais;
 import entities.Provincia;
 
 public class ProvinciaRepository {
 
-	private PaisRepository paisRepository;
+	private PaisRepository paisRepository = new PaisRepository();
 	
 	/**
 	 * Metodo que construye el objeto Provincia
@@ -25,8 +26,8 @@ public class ProvinciaRepository {
 			provincia.setNombre(resultSet.getNString("nombre"));
 			provincia.setFechaCreacion(resultSet.getDate("fechaCreacion"));
 			provincia.setFechaEliminacion(resultSet.getDate("fechaEliminacion"));
-			Long idPais = resultSet.getLong("idPais");
-			provincia.setPais(paisRepository.findById(idPais));
+			Pais pais = paisRepository.findById(resultSet.getLong("idPais"));
+			provincia.setPais(pais);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

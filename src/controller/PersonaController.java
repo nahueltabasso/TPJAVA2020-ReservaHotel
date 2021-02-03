@@ -21,6 +21,7 @@ public class PersonaController {
 	private Logger logger = LogManager.getLogger(getClass());
 	private PersonaRepository personaRepository = new PersonaRepository();
 	private RolRepository rolRepository = new RolRepository();
+	private DomicilioController domicilioCtrl = new DomicilioController();
 	
 	public Persona registrarPersona(Persona persona) throws Exception {
 		logger.log(Level.INFO, "Ingresa a registrarPersona()");
@@ -144,6 +145,9 @@ public class PersonaController {
 		
 		persona.setFechaCreacion(new Date());
 		persona.setFechaEliminacion(null);
+		
+		// Antes de persistir la persona debemos crear el domicilio
+		persona.setDomicilio(domicilioCtrl.registrarDomicilio(persona.getDomicilio()));
 	}
 	
 	private Persona actualizar(Long id, Persona persona) throws Exception {

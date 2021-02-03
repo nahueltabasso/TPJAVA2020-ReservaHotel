@@ -75,20 +75,22 @@ public class HabitacionController {
 	private void validHabitacionBeforeSave(Habitacion habitacion) throws Exception {
 		logger.log(Level.INFO, "Ingresa a validHabitacionBeforeSave()");
 
-				
 		// Validamos el numero de habitacion
 		if (Utils.cadContainsLetters(habitacion.getNumeroHabitacion().toString())) {
 			throw new Exception("Numero de habitación no valido! Ingrese solamente dígitos.");
 		}
 				
 		// Asignamos el tipo de habitación correspondiente a la habitación, si no tiene, por defecto se asigna SIMPLE
-		List<TipoHabitacion> tipoHabitaciones= new ArrayList<TipoHabitacion>();
-		tipoHabitaciones.add(habitacion.getTipoHabitacion());
-		if (Utils.isNullOrEmpty(tipoHabitaciones)) {
-			habitacion.setTipoHabitacion(tipoHabitacionRepository.findById(TipoHabitacion.SIMPLE));		
-		} else {
-			habitacion.setTipoHabitacion(tipoHabitacionRepository.findById(habitacion.getTipoHabitacion().getId()));
-		}
+//		List<TipoHabitacion> tipoHabitaciones= new ArrayList<TipoHabitacion>();
+//		tipoHabitaciones.add(habitacion.getTipoHabitacion());
+//		if (Utils.isNullOrEmpty(tipoHabitaciones)) {
+//			habitacion.setTipoHabitacion(tipoHabitacionRepository.findById(TipoHabitacion.SIMPLE));		
+//		} else {
+//			habitacion.setTipoHabitacion(tipoHabitacionRepository.findById(habitacion.getTipoHabitacion().getId()));
+//		}
+		
+		habitacion.setTipoHabitacion(habitacion.getTipoHabitacion() != null ? habitacion.getTipoHabitacion() : 
+			tipoHabitacionRepository.findById(TipoHabitacion.SIMPLE));
 		
 		habitacion.setFechaCreacion(new Date());
 		habitacion.setFechaEliminacion(null);

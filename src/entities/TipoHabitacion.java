@@ -6,7 +6,7 @@ import java.sql.Blob;
 
 public class TipoHabitacion {
 	
-	public static final Long SIMPLE = (long) 1;
+	public static final Long SIMPLE = 1L;
 	
 	private Long id;
 	private String descripcion;
@@ -16,7 +16,7 @@ public class TipoHabitacion {
 	private Blob foto;
 	
 	private String denominacion;
-	private Float precioPorDia;
+	private Double precioPorDia;
 	private Date fechaCreacion;
 	private Date fechaEliminacion;
 	
@@ -50,10 +50,10 @@ public class TipoHabitacion {
 	public void setDenominacion(String denominacion) {
 		this.denominacion = denominacion;
 	}
-	public Float getPrecioPorDia() {
+	public Double getPrecioPorDia() {
 		return precioPorDia;
 	}
-	public void setPrecioPorDia(Float precioPorDia) {
+	public void setPrecioPorDia(Double precioPorDia) {
 		this.precioPorDia = precioPorDia;
 	}
 	public Date getFechaCreacion() {

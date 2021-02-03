@@ -64,23 +64,20 @@ public class TipoHabitacionController {
 		
 	private void validTipoHabitacionBeforeSave(TipoHabitacion tipoHabitacion) throws Exception {
 		logger.log(Level.INFO, "Ingresa a validTipoHabitacionBeforeSave()");
-
-				
-		// Validamos que el precio no tenga letras
-		if (Utils.cadContainsLetters(tipoHabitacion.getPrecioPorDia().toString())) {
-			throw new Exception("Precio no válido! Ingrese solamente dígitos.");
-		}
 		
-		// Validamos que el precio no tenga letras
+		// Validamos que la capacidad no tenga letras
 		if (Utils.cadContainsLetters(tipoHabitacion.getCapacidad().toString())) {
 			throw new Exception("Capacidad no válida! Ingrese solamente dígitos.");
+		}
+		
+		if (!Utils.validaPrecio(tipoHabitacion.getPrecioPorDia().toString())) {
+			throw new Exception("Precio no valido!");
 		}
 		
 		tipoHabitacion.setFechaCreacion(new Date());
 		tipoHabitacion.setFechaEliminacion(null);
 	}
 	
-	// faltan validaciones
 	private TipoHabitacion actualizar(Long id, TipoHabitacion tipoHabitacion) throws Exception {
 		logger.log(Level.INFO, "Ingresa a actualizar()");
 
@@ -90,8 +87,19 @@ public class TipoHabitacionController {
 		if (tipoHabitacionDb == null) {
 			throw new Exception("No existe el tipo de habitación en la base de datos!");
 		}
+		
+		if (Utils.cadContainsLetters(tipoHabitacion.getCapacidad().toString())) {
+			throw new Exception("Capacidad no válida! Ingrese solamente dígitos.");
+		}
+		
+		if (!Utils.validaPrecio(tipoHabitacion.getPrecioPorDia().toString())) {
+			throw new Exception("Precio no valido!");
+		}
 				
-				
-		return tipoHabitacionRepository.update(tipoHabitacion);
+		tipoHabitacionDb.setDescripcion(tipoHabitacion.getDescripcion());
+		tipoHabitacionDb.setCapacidad(tipoHabitacionDb.getCapacidad());
+		tipoHabitacionDb.setDenominacion(tipoHabitacion.getDenominacion());
+		tipoHabitacionDb.setPrecioPorDia(tipoHabitacion.getPrecioPorDia());
+		return tipoHabitacionRepository.update(tipoHabitacionDb);
 	}
 }

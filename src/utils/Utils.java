@@ -77,6 +77,21 @@ public class Utils {
 		}
 	}
 	
+    /**
+     * Retorna true cuando el precio es valido, caso contrario retorna false
+     * @param precio
+     * @return
+     */
+	public static boolean validaPrecio(String precio) {
+		final String regExp = "[0-9]+([,.][0-9]{1,2})?";
+		final Pattern pattern = Pattern.compile(regExp);
+		if (pattern.matches(regExp, precio)) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
 	/**
 	 * Retorna true si el cuit de una persona es valido
 	 * @param cuit

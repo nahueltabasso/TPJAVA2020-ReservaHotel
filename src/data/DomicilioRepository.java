@@ -11,12 +11,13 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import entities.Domicilio;
+import entities.Localidad;
 import exceptions.DataException;
 
 public class DomicilioRepository {
 	
 	private Logger logger = LogManager.getLogger(getClass());
-	private LocalidadRepository localidadRepository;
+	private LocalidadRepository localidadRepository = new LocalidadRepository();
 	
 	/**
 	 * Metodo que construye el objeto Domicilio
@@ -33,8 +34,8 @@ public class DomicilioRepository {
 			domicilio.setDepartamento(resultSet.getNString("departamento"));
 			domicilio.setFechaCreacion(resultSet.getDate("fechaCreacion"));
 			domicilio.setFechaEliminacion(resultSet.getDate("fechaEliminacion"));
-			Long idLocalidad = resultSet.getLong("idLocalidad");
-			domicilio.setLocalidad(localidadRepository.findById(idLocalidad));
+			Localidad localidad = localidadRepository.findById(resultSet.getLong("idLocalidad"));
+			domicilio.setLocalidad(localidad);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -148,8 +149,13 @@ public class DomicilioRepository {
 			// Pasamos los parametros para la query nativa
 			statement.setString(1, domicilio.getCalle());
 			statement.setString(2, domicilio.getNumero());
-			statement.setString(3, domicilio.getPiso());
-			statement.setString(4, domicilio.getDepartamento());
+			if (domicilio.getPiso() == null && domicilio.getDepartamento() == null) {
+				statement.setNull(3, java.sql.Types.DOUBLE);
+				statement.setNull(4, java.sql.Types.DOUBLE);
+			} else {
+				statement.setString(3, domicilio.getPiso());
+				statement.setString(4, domicilio.getDepartamento());				
+			}
 			statement.setDate(5, new Date(domicilio.getFechaCreacion().getTime()));
 			// Fecha de eliminacion de persona se guarda como null
 			statement.setNull(6, java.sql.Types.DATE);
@@ -170,7 +176,6 @@ public class DomicilioRepository {
 			DataBaseConnection.closeResultSet(resultSet);
 			DataBaseConnection.closePreparedStatement(statement);
 			DataBaseConnection.closeConnection(connection);
-			
 		}
 		return domicilio;
 	}
