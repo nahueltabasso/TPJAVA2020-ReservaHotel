@@ -5,10 +5,14 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import entities.Salon;
+import entities.TipoHabitacion;
 import exceptions.DataException;
 
 public class SalonRepository {
@@ -68,8 +72,35 @@ private Logger logger = LogManager.getLogger(getClass());
 		}
 		return salon;
 	}
-
-		
+	
+	
+	/**
+	 * Metodo que retorna una lista de salones
+	 * @param 
+	 * @return
+	 */
+	public List<Salon> findAll() {
+		Connection connection = null;
+		PreparedStatement statement = null;
+		ResultSet resultSet = null;
+		List<Salon> salonesList = new ArrayList<Salon>();
+		try {
+			connection = DataBaseConnection.getConnection();
+			statement = connection.prepareStatement("select * from salones");
+			resultSet = statement.executeQuery();
+			while (resultSet.next()) {
+				Salon salon = buildSalon(resultSet);
+				salonesList.add(salon);
+			}
+		} catch(SQLException e) {
+			e.printStackTrace();
+		} finally {
+			DataBaseConnection.closeResultSet(resultSet);
+			DataBaseConnection.closePreparedStatement(statement);
+			DataBaseConnection.closeConnection(connection);
+		}
+		return salonesList;
+	}	
 	
 	/**
 	 * Metodo que inserta un registro en la base de datos
@@ -173,6 +204,28 @@ private Logger logger = LogManager.getLogger(getClass());
 		}
 	}
 
+	// Devuelve true si ya existe el nombre del salón en la BD
+		public boolean existSalon (Salon salon) throws Exception {
+			Connection connection = null;
+			PreparedStatement statement = null;
+			ResultSet resultSet = null;
+			boolean row;
+			try {
+				connection = DataBaseConnection.getConnection();
+				statement = connection.prepareStatement("select * from salones where nombreSalon = ? ");
+				statement.setString(1, salon.getNombreSalon());
+				resultSet = statement.executeQuery();
+				row = resultSet.isBeforeFirst();
+			} catch (SQLException e) {
+				logger.log(Level.ERROR, e.getMessage());
+				throw e;
+			} finally {
+				DataBaseConnection.closeConnection(connection);
+				DataBaseConnection.closePreparedStatement(statement);
+				DataBaseConnection.closeResultSet(resultSet);
+			}
 
+			return row;
+		}
 
 }
