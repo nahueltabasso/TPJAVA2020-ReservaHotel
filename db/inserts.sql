@@ -83,9 +83,9 @@ INSERT INTO `Hotel`.`Facturas` (`numeroFactura`, `monto`, `fechaCreacion`, `idTa
 INSERT INTO `Hotel`.`LineaFacturas` (`cantidad`, `monto`, `fechaCreacion`, `idFactura`) VALUES
 (1, 3000, '2020-01-01 13:00:00', 1),
 (2, 2000, '2020-01-01 13:00:00', 2),
-(3, 1000, '2020-01-01 13:00:00', 3),
-(3, 2000, '2020-01-01 13:00:00', 3),
-(3, 2000, '2020-01-01 13:00:00', 3);
+(1, 1000, '2020-01-01 13:00:00', 3),
+(1, 2000, '2020-01-01 13:00:00', 3),
+(1, 2000, '2020-01-01 13:00:00', 3);
 
 INSERT INTO `Hotel`.`EstadoReservas` (`descripcion`, `fechaCreacion`) VALUES
 ('Reservada', '2020-01-01 13:00:00'),
@@ -138,6 +138,14 @@ INSERT INTO `Hotel`.`Reservas` (`fechaReserva`, `cantDias`, `fechaEntrada`, `fec
 ('2020-06-01 13:00:00', 1, '2021-10-10 13:00:00', '2020-01-01 13:00:00', 1, 1, 6),
 ('2020-07-10 13:00:00', 1, '2021-11-11 13:00:00', '2020-01-01 13:00:00', 3, 1, 2);
 
+/* updates
+
+update reservas set fechaSalida = '2021-02-09 10:00:00' where reservas.id = 1;
+update reservas set fechaSalida = '2021-03-03 10:00:00' where reservas.id = 2;
+update reservas set fechaSalida = '2021-10-12 12:00:00' where reservas.id = 7;
+update reservas set fechaSalida = '2021-11-12 08:00:00' where reservas.id = 8;
+update reservas set fechaSalida = '2021-11-15 11:30:00' where reservas.id = 10;
+*/
 
 /*
 select * from roles;

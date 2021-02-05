@@ -1,5 +1,7 @@
 package utils;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -141,6 +143,54 @@ public class Utils {
 		}
 		return false;
 	}
+	
+	/**
+     * Valida el número de la tarjeta de crédito.
+     * @param numeroTarjeta
+     * @return true si el numero de la tarjeta pasa la validacion numérica y el algoritmo de Luhn
+     */
+    public static boolean validaNumeroTarjeta(String numeroTarjeta) {
+            	
+        String nroTarjeta = numeroTarjeta.replaceAll("[^0-9]+", ""); // elimina caracteres no numéricos y valida longitud
+        if ((nroTarjeta == null) || (nroTarjeta.length() < 13) || (nroTarjeta.length() > 19)) {
+            return false;
+        }
+    	
+    	// si llegamos hasta acá, prueba si el número de la tarjeta pasa el algoritmo de Luhn
+        int digits = nroTarjeta.length();
+        int oddOrEven = digits & 1;
+        long sum = 0;
+        for (int count = 0; count < digits; count++) {
+            int digit = 0;
+            try {
+                digit = Integer.parseInt(nroTarjeta.charAt(count) + "");
+            } catch(NumberFormatException e) {
+                return false;
+            }
 
+            if (((count & 1) ^ oddOrEven) == 0) { // not
+                digit *= 2;
+                if (digit > 9) {
+                    digit -= 9;
+                }
+            }
+            sum += digit;
+        }
 
+        return (sum == 0) ? false : (sum % 10 == 0);
+    }
+    
+    public static boolean validaVencimientoTarjeta(Date fechaVencimiento) {
+    	Date fechaActual = new Date();
+    	SimpleDateFormat formateador = new SimpleDateFormat("MM-yy");
+    	formateador.format(fechaVencimiento);
+    	formateador.format(fechaActual);
+    	if (fechaActual.compareTo(fechaVencimiento) <= 0 ) {
+    		return true;
+    	} else {
+    		return false;
+    	}
+    	
+    }
+    
 }
