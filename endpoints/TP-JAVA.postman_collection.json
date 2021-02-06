@@ -62,7 +62,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"email\": \"emailTest@gmail.com\",\r\n    \"password\": \"abc123456\"\r\n}",
+					"raw": "{\r\n    \"email\": \"jperez@gmail.com\",\r\n    \"password\": \"abc123456\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -520,6 +520,159 @@
 						{
 							"key": "idSalon",
 							"value": "5"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ListarHabitacionesDisponiblesFiltros",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"postman.setGlobalVariable('fechaDesde', (new Date(2021,02,04)).toISOString());\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/utn-tp-web-hotel/HabitacionesDisponibles?idTipoHabitacion=1&fechaDesde={{fechaDesde}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"utn-tp-web-hotel",
+						"HabitacionesDisponibles"
+					],
+					"query": [
+						{
+							"key": "idTipoHabitacion",
+							"value": "1"
+						},
+						{
+							"key": "fechaDesde",
+							"value": "{{fechaDesde}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CrearReserva",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"fechaEntrada\": \"2021-02-04\",\r\n    \"fechaSalida\": \"2021-02-19\",\r\n    \"persona\": {\r\n        \"id\": 4,\r\n        \"nombre\": \"Esteban\",\r\n        \"apellido\": \"Quito\",\r\n        \"email\": \"equito@gmail.com\",\r\n        \"password\": \"f5bec753bbee8b53fc7952acb03be409cafd8e339b7e2116010bb2c4550d9d7d556c88dfd33746f3eaef6b94b0a26b3c52107cb4f4eb8481fd8fb2524b27d5fb\",\r\n        \"nroDocumento\": 35777888,\r\n        \"tipoDocumento\": \"DNI\",\r\n        \"cuit\": \"20-35777888-7\",\r\n        \"telefono\": 3416999456,\r\n        \"genero\": \"Masculino\",\r\n        \"fechaCreacion\": \"2019-12-31\",\r\n        \"sueldoMensual\": 0.0,\r\n        \"legajo\": 0,\r\n        \"rol\": {\r\n            \"id\": 3,\r\n            \"nombreRol\": \"Cliente\",\r\n            \"fechaCreacion\": \"2019-12-31\"\r\n        },\r\n        \"domicilio\": {\r\n            \"id\": 3,\r\n            \"calle\": \"Salta\",\r\n            \"numero\": \"3575\",\r\n            \"fechaCreacion\": \"2019-12-31\",\r\n            \"localidad\": {\r\n                \"id\": 1,\r\n                \"nombre\": \"Rosario\",\r\n                \"codigoPostal\": \"2000\",\r\n                \"fechaCreacion\": \"2019-12-31\",\r\n                \"provincia\": {\r\n                    \"id\": 1,\r\n                    \"nombre\": \"Santa Fe\",\r\n                    \"fechaCreacion\": \"2019-12-31\",\r\n                    \"pais\": {\r\n                        \"id\": 1,\r\n                        \"nombre\": \"Argentina\",\r\n                        \"fechaCreacion\": \"2019-12-31\"\r\n                    }\r\n                }\r\n            }\r\n        }\r\n    },\r\n    \"estadoReserva\": {\r\n        \"id\": 1,\r\n        \"descripcion\": \"Reservada\",\r\n        \"fechaCreacion\": \"2019-12-31\"\r\n    },\r\n    \"habitacion\": {\r\n        \"id\": 1,\r\n        \"numeroHabitacion\": 101,\r\n        \"fechaCreacion\": \"2019-12-31\",\r\n        \"tipoHabitacion\": {\r\n            \"id\": 1,\r\n            \"descripcion\": \"Habitación Simple\",\r\n            \"capacidad\": 1,\r\n            \"denominacion\": \"Simple\",\r\n            \"precioPorDia\": 2000.0,\r\n            \"fechaCreacion\": \"2019-12-31\"\r\n        }\r\n    },\r\n    \"salon\": null\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/utn-tp-web-hotel/ReservaServlet",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"utn-tp-web-hotel",
+						"ReservaServlet"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CancelarReservaById",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/utn-tp-web-hotel/CancelarReserva?idReserva=11",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"utn-tp-web-hotel",
+						"CancelarReserva"
+					],
+					"query": [
+						{
+							"key": "idReserva",
+							"value": "11"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "SolicitarTokenCambioPassword",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/utn-tp-web-hotel/SolicitarCambioContraseña?email=email@gmail.com",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"utn-tp-web-hotel",
+						"SolicitarCambioContraseña"
+					],
+					"query": [
+						{
+							"key": "email",
+							"value": "email@gmail.com"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ModificarContraseña",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/utn-tp-web-hotel/ModificarContraseña?token=4b58f20a-2893-4544-b8f8-1ec14ae254ae&newPass=123456abc",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"utn-tp-web-hotel",
+						"ModificarContraseña"
+					],
+					"query": [
+						{
+							"key": "token",
+							"value": "4b58f20a-2893-4544-b8f8-1ec14ae254ae"
+						},
+						{
+							"key": "newPass",
+							"value": "123456abc"
 						}
 					]
 				}
