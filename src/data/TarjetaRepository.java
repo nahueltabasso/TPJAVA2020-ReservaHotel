@@ -10,13 +10,15 @@ import java.util.List;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import entities.Salon;
 import entities.Tarjeta;
 import exceptions.DataException;
 
 public class TarjetaRepository {
 	
 	private Logger logger = LogManager.getLogger(getClass());
-	private PersonaRepository personaRepository;
+	private PersonaRepository personaRepository = new PersonaRepository();
 	
 	/**
 	 * Metodo que construye el objeto Tarjeta
@@ -72,6 +74,34 @@ public class TarjetaRepository {
 		return tarjeta;
 	}
 
+	/**
+	 * Metodo que retorna una lista de tarjetas
+	 * @param 
+	 * @return
+	 */
+	public List<Tarjeta> findAll() {
+		Connection connection = null;
+		PreparedStatement statement = null;
+		ResultSet resultSet = null;
+		List<Tarjeta> tarjetaList = new ArrayList<Tarjeta>();
+		try {
+			connection = DataBaseConnection.getConnection();
+			statement = connection.prepareStatement("select * from tarjetas");
+			resultSet = statement.executeQuery();
+			while (resultSet.next()) {
+				Tarjeta tarjeta = buildTarjeta(resultSet);
+				tarjetaList.add(tarjeta);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			DataBaseConnection.closeResultSet(resultSet);
+			DataBaseConnection.closePreparedStatement(statement);
+			DataBaseConnection.closeConnection(connection);
+		}
+		return tarjetaList;
+	}	
+	
 	/**
 	 * Metodo que retorna una lista de tarjetas segun la persona
 	 * @param idPersona
@@ -200,5 +230,30 @@ public class TarjetaRepository {
 			DataBaseConnection.closeConnection(connection);
 		}
 		return tarjeta;
+	}
+	
+	
+	// Devuelve true si ya existe la tarjeta en la BD
+	public boolean existTarjeta (Tarjeta tarjeta) throws Exception {
+		Connection connection = null;
+		PreparedStatement statement = null;
+		ResultSet resultSet = null;
+		boolean row;
+		try {
+			connection = DataBaseConnection.getConnection();
+			statement = connection.prepareStatement("select * from tarjetas where numeroTarjeta = ? ");
+			statement.setLong(1, tarjeta.getNumeroTarjeta());
+			resultSet = statement.executeQuery();
+			row = resultSet.isBeforeFirst();
+		} catch (SQLException e) {
+			logger.log(Level.ERROR, e.getMessage());
+			throw e;
+		} finally {
+			DataBaseConnection.closeConnection(connection);
+			DataBaseConnection.closePreparedStatement(statement);
+			DataBaseConnection.closeResultSet(resultSet);
+		}
+
+		return row;
 	}
 }

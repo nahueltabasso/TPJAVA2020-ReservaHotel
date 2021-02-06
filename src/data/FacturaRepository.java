@@ -11,12 +11,13 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import entities.Factura;
+import entities.Tarjeta;
 import exceptions.DataException;
 
 public class FacturaRepository {
 	
 	private Logger logger = LogManager.getLogger(getClass());
-	private TarjetaRepository tarjetaRepository;
+	private TarjetaRepository tarjetaRepository = new TarjetaRepository();
 	
 	/**
 	 * Metodo que construye el objeto Factura
@@ -25,14 +26,15 @@ public class FacturaRepository {
 	 */
 	private Factura buildFactura(ResultSet resultSet) {
 		Factura factura = new Factura();
+		Tarjeta tarjeta = new Tarjeta();
 		try {
 			factura.setId(resultSet.getLong("id"));
 			factura.setNumeroFactura(resultSet.getLong("numeroFactura"));
 			factura.setMonto(resultSet.getFloat("monto"));
 			factura.setFechaCreacion(resultSet.getDate("fechaCreacion"));
 			factura.setFechaEliminacion(resultSet.getDate("fechaEliminacion"));
-			Long idTarjeta = resultSet.getLong("idTarjeta");
-			factura.setTarjeta(tarjetaRepository.findById(idTarjeta));
+			tarjeta = tarjetaRepository.findById(resultSet.getLong("idTarjeta"));
+			factura.setTarjeta(tarjeta);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -71,7 +73,7 @@ public class FacturaRepository {
 	}
 
 	/**
-	 * Metodo que retorna una lista de facturas segun la tarjeta
+	 * Metodo que retorna una lista de facturas segun el id de la tarjeta
 	 * @param idTarjeta
 	 * @return
 	 */
@@ -91,6 +93,34 @@ public class FacturaRepository {
 				facturaList.add(factura);
 			}
 		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			DataBaseConnection.closeResultSet(resultSet);
+			DataBaseConnection.closePreparedStatement(statement);
+			DataBaseConnection.closeConnection(connection);
+		}
+		return facturaList;
+	}	
+	
+	/**
+	 * Metodo que retorna una lista de facturas
+	 * @param 
+	 * @return
+	 */
+	public List<Factura> findAll() {
+		Connection connection = null;
+		PreparedStatement statement = null;
+		ResultSet resultSet = null;
+		List<Factura> facturaList = new ArrayList<Factura>();
+		try {
+			connection = DataBaseConnection.getConnection();
+			statement = connection.prepareStatement("select * from facturas");
+			resultSet = statement.executeQuery();
+			while (resultSet.next()) {
+				Factura factura = buildFactura(resultSet);
+				facturaList.add(factura);
+			}
+		} catch(SQLException e) {
 			e.printStackTrace();
 		} finally {
 			DataBaseConnection.closeResultSet(resultSet);
@@ -196,5 +226,28 @@ public class FacturaRepository {
 		}
 	}
 
+	// Devuelve true si ya existe el numero de la factura en la BD
+	public boolean existFactura (Factura factura) throws Exception {
+		Connection connection = null;
+		PreparedStatement statement = null;
+		ResultSet resultSet = null;
+		boolean row;
+		try {
+			connection = DataBaseConnection.getConnection();
+			statement = connection.prepareStatement("select * from facturas where numeroFactura = ? ");
+			statement.setLong(1, factura.getNumeroFactura());
+			resultSet = statement.executeQuery();
+			row = resultSet.isBeforeFirst();
+		} catch (SQLException e) {
+			logger.log(Level.ERROR, e.getMessage());
+			throw e;
+		} finally {
+			DataBaseConnection.closeConnection(connection);
+			DataBaseConnection.closePreparedStatement(statement);
+			DataBaseConnection.closeResultSet(resultSet);
+		}
+
+		return row;
+	}
 
 }
