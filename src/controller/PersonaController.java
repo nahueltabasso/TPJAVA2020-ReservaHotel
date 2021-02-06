@@ -15,6 +15,7 @@ import entities.Persona;
 import entities.Rol;
 import utils.Hash;
 import utils.Utils;
+import utils.email.EmailService;
 
 public class PersonaController {
 
@@ -22,12 +23,14 @@ public class PersonaController {
 	private PersonaRepository personaRepository = new PersonaRepository();
 	private RolRepository rolRepository = new RolRepository();
 	private DomicilioController domicilioCtrl = new DomicilioController();
+	private EmailService emailService = new EmailService();
 	
 	public Persona registrarPersona(Persona persona) throws Exception {
 		logger.log(Level.INFO, "Ingresa a registrarPersona()");
 		preValidation(persona, true);
 		validPersonaBeforeSave(persona);
 		Persona personaDB = personaRepository.save(persona);
+		emailService.sendEmail(personaDB, "Has completado la registracion!\nBienvenido al sistema!");
 		return personaDB;
 	}
 	

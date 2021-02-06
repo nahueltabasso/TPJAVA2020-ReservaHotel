@@ -55,6 +55,12 @@ public class HabitacionController {
 		habitacionRepository.delete(id);
 	}
 	
+	public List<Habitacion> getHabitacionesDisponiblesParaReservar(Long idTipoHabitacion, Date fechaDesde) throws Exception {
+		List<Habitacion> dtoList = new ArrayList<Habitacion>();
+		dtoList = habitacionRepository.findHabitacionesDisponiblesParaReserva(new java.sql.Date(fechaDesde.getTime()), idTipoHabitacion);
+		return dtoList;
+	}
+	
 	public Habitacion actualizarHabitacion(Long id, Habitacion habitacion) throws Exception {
 		logger.log(Level.INFO, "Ingresa a actualizarHabitacion()");
 		preValidation(habitacion, false);

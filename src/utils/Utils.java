@@ -1,5 +1,6 @@
 package utils;
 
+import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -140,6 +141,17 @@ public class Utils {
 			}
 		}
 		return false;
+	}
+
+	/**
+	 * Retorna la diferencia de dias entre dos fechas
+	 * @param fecha1
+	 * @param fecha2
+	 * @return
+	 */
+	public static int diferenciaEntreDosFechas(Date fecha1, Date fecha2) {
+		int dias = (int) ((fecha2.getTime() - fecha1.getTime()) / 86400000);
+		return dias;
 	}
 
 

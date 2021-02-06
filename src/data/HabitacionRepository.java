@@ -11,7 +11,6 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import entities.Habitacion;
-import entities.Persona;
 import exceptions.DataException;
 
 public class HabitacionRepository {
@@ -241,6 +240,36 @@ public class HabitacionRepository {
 			DataBaseConnection.closeResultSet(resultSet);
 		}
 		return row;
+	}
+	
+	public List<Habitacion> findHabitacionesDisponiblesParaReserva(Date fechaDesde, Long idTipoHabitacion) throws Exception {
+		Connection connection = null;
+		PreparedStatement statement = null;
+		ResultSet resultSet = null;
+		List<Habitacion> habitacionesList = new ArrayList<Habitacion>();
+		try {
+			connection = DataBaseConnection.getConnection();
+			statement = connection.prepareStatement("select hab.* " + 
+													"from habitaciones hab " + 
+													"inner join tipohabitaciones th on th.id = hab.idTipoHabitacion " + 
+													"where hab.id not in (select res.idHabitacion from reservas res where ? not between res.fechaEntrada and res.fechaSalida and res.fechaCancelacion is null " + 
+													"					and res.idHabitacion is not null) and th.id = ?");
+
+			statement.setDate(1, fechaDesde);
+			statement.setLong(2, idTipoHabitacion);
+			resultSet = statement.executeQuery();
+			while (resultSet.next()) {
+				Habitacion habitacion = buildHabitacion(resultSet);
+				habitacionesList.add(habitacion);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			DataBaseConnection.closeResultSet(resultSet);
+			DataBaseConnection.closePreparedStatement(statement);
+			DataBaseConnection.closeConnection(connection);
+		}
+		return habitacionesList;
 	}
 
 }

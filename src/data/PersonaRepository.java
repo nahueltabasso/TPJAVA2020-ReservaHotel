@@ -365,4 +365,27 @@ public class PersonaRepository {
 		}
 		return persona;
 	}
+	
+	public int actualizarContraseña(Persona persona) throws Exception {
+		Connection connection = null;
+		PreparedStatement statement = null;
+		ResultSet resultSet = null;
+		int row = 0;
+		try {
+			connection = DataBaseConnection.getConnection();
+			statement = connection.prepareStatement("update personas set password = ? WHERE id = ?");
+			statement.setString(1, persona.getPassword());
+			statement.setLong(2, persona.getId());
+
+			row = statement.executeUpdate();
+		} catch (SQLException e) {
+			logger.log(Level.ERROR, e.getMessage());
+			throw e;
+		} finally {
+			DataBaseConnection.closeConnection(connection);
+			DataBaseConnection.closePreparedStatement(statement);
+			DataBaseConnection.closeResultSet(resultSet);
+		}
+		return row;
+	}
 }

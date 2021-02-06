@@ -10,16 +10,18 @@ import java.util.List;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import entities.EstadoReserva;
 import entities.Reserva;
 import exceptions.DataException;
 
 public class ReservaRepository {
 	
 	private Logger logger = LogManager.getLogger(getClass());
-	private PersonaRepository personaRepository;
-	private EstadoReservaRepository estadoReservaRepository;
-	private HabitacionRepository habitacionRepository;
-	private SalonRepository salonRepository;
+	private PersonaRepository personaRepository = new PersonaRepository();
+	private EstadoReservaRepository estadoReservaRepository = new EstadoReservaRepository();
+	private HabitacionRepository habitacionRepository = new HabitacionRepository();
+	private SalonRepository salonRepository = new SalonRepository();
 	
 	/**
 	 * Metodo que construye el objeto Reserva
@@ -48,7 +50,6 @@ public class ReservaRepository {
 		} catch (Exception e) {
 			logger.log(Level.ERROR, e.getMessage());
 		}
-	
 		return reserva;
 	}
 		
@@ -65,7 +66,7 @@ public class ReservaRepository {
 		Reserva reserva = new Reserva();
 		try {
 			connection = DataBaseConnection.getConnection();
-			statement = connection.prepareStatement("select * from Reservaes where id = ?");
+			statement = connection.prepareStatement("select * from reservas where id = ?");
 			statement.setLong(1, id);
 			
 			resultSet = statement.executeQuery();
@@ -112,7 +113,6 @@ public class ReservaRepository {
 			DataBaseConnection.closePreparedStatement(statement);
 			DataBaseConnection.closeResultSet(resultSet);
 		}
-		
 		return list;
 	}
 
@@ -260,18 +260,21 @@ public class ReservaRepository {
 			// fechaCancelacion de reserva se guarda como null
 			statement.setNull(2, java.sql.Types.DATE);
 			statement.setInt(3, reserva.getCantDias());
-			// fechaEntrada de reserva se guarda como null
-			statement.setNull(4, java.sql.Types.DATE);
-			// fechaSalida de reserva se guarda como null
-			statement.setNull(5, java.sql.Types.DATE);
+			statement.setDate(4, new Date(reserva.getFechaEntrada().getTime()));
+			statement.setDate(5, new Date(reserva.getFechaSalida().getTime()));
 			statement.setDate(6, new Date(reserva.getFechaCreacion().getTime()));
 			// fechaEliminacion de reserva se guarda como null
 			statement.setNull(7, java.sql.Types.DATE);
 			statement.setLong(8, reserva.getPersona().getId());
 			statement.setLong(9, reserva.getEstadoReserva().getId());
-			// TODO ¿Hay que validar si Habitacion o Salon son NULL?
-			statement.setLong(10, reserva.getHabitacion().getId());
-			statement.setLong(11, reserva.getSalon().getId());
+			
+			if (reserva.getHabitacion() != null) {
+				statement.setLong(10, reserva.getHabitacion().getId());
+				statement.setNull(11, java.sql.Types.BIGINT);				
+			} else {
+				statement.setNull(10, java.sql.Types.BIGINT);
+				statement.setLong(11, reserva.getSalon().getId());				
+			}
 			
 			statement.executeUpdate();
 			resultSet = statement.getGeneratedKeys();
@@ -288,7 +291,6 @@ public class ReservaRepository {
 			DataBaseConnection.closeResultSet(resultSet);
 			DataBaseConnection.closePreparedStatement(statement);
 			DataBaseConnection.closeConnection(connection);
-			
 		}
 		return reserva;
 	}
@@ -351,5 +353,27 @@ public class ReservaRepository {
 		}
 	}
 
+	public int cancelar(Long id) throws Exception {
+		Connection connection = null;
+		PreparedStatement statement = null;
+		ResultSet resultSet = null;
+		int row = 0;
+		try {
+			connection = DataBaseConnection.getConnection();
+			statement = connection.prepareStatement("update reservas set fechaCancelacion = current_timestamp(), " 
+													+ "idEstadoReserva = (select id from estadoreservas where descripcion = ?) WHERE id = ?");
+			statement.setString(1, EstadoReserva.CANCELADA);
+			statement.setLong(2, id);
+			row = statement.executeUpdate();
+		} catch (SQLException e) {
+			logger.log(Level.ERROR, e.getMessage());
+			throw e;
+		} finally {
+			DataBaseConnection.closeResultSet(resultSet);
+			DataBaseConnection.closePreparedStatement(statement);
+			DataBaseConnection.closeConnection(connection);
+		}
+		return row;
+	}
 
 }
