@@ -365,3 +365,10 @@ REFERENCES `Salones`(`id`)
 ON DELETE CASCADE
 ON UPDATE CASCADE;
 
+DROP TABLE IF EXISTS `Hotel`.`passwordresettoken`;
+CREATE TABLE `Hotel`.`passwordresettoken` (
+    `id` BIGINT NOT NULL AUTO_INCREMENT,
+    `id_usuario` BIGINT NOT NULL,
+    `token` VARCHAR(255), 
+    PRIMARY KEY (`id`)
+)ENGINE=InnoDB DEFAULT CHARSET=utf8;
