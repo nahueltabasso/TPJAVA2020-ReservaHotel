@@ -24,7 +24,7 @@ import entities.Rol;
 import response.MessageErrorResponse;
 import utils.JsonToJavaObject;
 
-@WebServlet("/ReservaServlet")
+@WebServlet("/Reserva")
 public class ReservaServlet extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -108,6 +108,27 @@ public class ReservaServlet extends HttpServlet {
 	}
 
 	protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
+		Gson gson = new Gson();
+		try {
+			Persona personaLogueada = (Persona) request.getSession().getAttribute("usuario");
+			
+			if (personaLogueada == null) {
+				throw new AccessDeniedException("Acceso denegado!");
+			}
+			Long id = Long.parseLong(request.getParameter("idReserva"));
+			reservaCtrl.delete(id);
+			logger.log(Level.INFO, "Reserva eliminada con exito");
+		} catch (AccessDeniedException e) {
+			logger.log(Level.ERROR, e.getMessage());
+			MessageErrorResponse mensaje = new MessageErrorResponse(e.getMessage());
+			response.setStatus(401);
+			response.getWriter().print(gson.toJson(mensaje));
+		} catch (Exception e) {
+			logger.log(Level.ERROR, e.getMessage());
+			MessageErrorResponse mensaje = new MessageErrorResponse(e.getMessage());
+			response.setStatus(500);
+			response.getWriter().print(gson.toJson(mensaje));
+		}
+	
 	}
 }

@@ -2,10 +2,9 @@ package controller;
 
 import java.util.Date;
 import java.util.List;
-
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import data.ReservaRepository;
 import entities.EstadoReserva;
 import entities.Persona;
@@ -68,5 +67,14 @@ public class ReservaController {
 		reserva.setFechaCancelacion(null);
 		reserva.setCantDias(Utils.diferenciaEntreDosFechas(reserva.getFechaEntrada(), reserva.getFechaSalida()));
 		reserva.setFechaCreacion(new Date());
+	}
+
+	public void delete(Long id) throws Exception {
+		logger.log(Level.INFO, "Ingresa a delete()");
+		Reserva reservaDB = reservaRepository.findById(id);
+		if (reservaDB.getId() == null) {
+			throw new Exception("ERROR - No existe reserva en la base de datos!");
+		}
+		reservaRepository.delete(id);		
 	}
 }

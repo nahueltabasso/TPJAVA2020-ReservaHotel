@@ -3,21 +3,16 @@ package servlet;
 import java.io.IOException;
 import java.nio.file.AccessDeniedException;
 import java.util.List;
-
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import com.google.gson.Gson;
-
 import controller.HabitacionController;
-import controller.PersonaController;
 import entities.Habitacion;
 import entities.Persona;
 import entities.Rol;
@@ -30,7 +25,6 @@ public class HabitacionServlet extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
 	private Logger logger = LogManager.getLogger(getClass());
-	private PersonaController personaController = new PersonaController();
 	private HabitacionController habitacionController = new HabitacionController();
     
     public HabitacionServlet() {}

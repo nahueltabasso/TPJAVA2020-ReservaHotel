@@ -31,7 +31,7 @@ public class SolicitarCambioContraseñaServlet extends HttpServlet {
 		Gson gson = new Gson();
 		try {
 			String email = request.getParameter("email");
-			loginCtrl.requestResertPassword(email);
+			loginCtrl.requestResetPassword(email);
 			
 			// Response
 			response.setContentType("application/json");
