@@ -36,7 +36,7 @@ public class LoginController {
 		return personaDB;
 	}
 	
-	public void requestResertPassword(String email) throws Exception {
+	public void requestResetPassword(String email) throws Exception {
 		// Primero validamos que el email pertenezca a un usuario activo del sistema
 		if (!Utils.validaEmail(email)) {
             throw new Exception();
