@@ -1,9 +1,6 @@
 package utils;
 
-<<<<<<< HEAD
-=======
 import java.text.SimpleDateFormat;
->>>>>>> 65dcd6599fe205f1804042eaddcdd07473e5436b
 import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
