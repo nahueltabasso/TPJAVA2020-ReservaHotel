@@ -12,7 +12,6 @@ import data.PersonaRepository;
 import entities.PasswordResetToken;
 import entities.Persona;
 import exceptions.LoginException;
-import response.MessageErrorResponse;
 import utils.Hash;
 import utils.Utils;
 import utils.email.EmailService;
@@ -52,8 +51,8 @@ public class LoginController {
         PasswordResetToken prt = new PasswordResetToken(null, persona.getId(), token);
         prtRepository.save(prt);
         // Cambiar luego el host al host de prd
-        String body = "http://localhost:4200/reset-password?token=" + token;
-        emailService.sendEmail(persona, body);
+        String body = "http://localhost:4200/modificar-contraseña?token=" + token;
+        emailService.sendEmail(persona, body, "Solicitud Cambio de Contraseña");
 	}
 	
 	public void resetPassword(String token, String newPassword) throws Exception {

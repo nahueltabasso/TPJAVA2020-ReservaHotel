@@ -1,7 +1,6 @@
 package servlet;
 
 import java.io.IOException;
-import java.nio.file.AccessDeniedException;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -36,8 +35,8 @@ public class SolicitarCambioContraseñaServlet extends HttpServlet {
 			// Response
 			response.setContentType("application/json");
 		    response.setCharacterEncoding("UTF-8");
-		    response.getWriter().print("Se ha enviado un mail a su correo. Por favor revise su casilla!");
-			response.setStatus(201);
+		    response.getWriter().print(new Gson().toJson("{message:" + "Se te ha enviado un correo a tu casilla con los pasos a seguir! }"));
+			response.setStatus(200);
 		    response.getWriter().flush();
 		} catch (Exception e) {
 			logger.log(Level.ERROR, e.getMessage());

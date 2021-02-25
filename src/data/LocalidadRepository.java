@@ -25,7 +25,7 @@ public class LocalidadRepository {
 			localidad.setId(resultSet.getLong("id"));
 			localidad.setNombre(resultSet.getString("nombre"));
 			localidad.setCodigoPostal(resultSet.getString("codigoPostal"));
-			localidad.setFechaCreacion(resultSet.getDate("fechaCreacion"));
+//			localidad.setFechaCreacion(resultSet.getDate("fechaCreacion"));
 			localidad.setFechaEliminacion(resultSet.getDate("fechaEliminacion"));
 			Provincia provincia = provinciaRepository.findById(resultSet.getLong("idProvincia"));
 			localidad.setProvincia(provincia);
@@ -47,7 +47,7 @@ public class LocalidadRepository {
 		List<Localidad> localidadList = new ArrayList<Localidad>();
 		try {
 			connection = DataBaseConnection.getConnection();
-			statement = connection.prepareStatement("select * from localidades where idProvincia = ?");
+			statement = connection.prepareStatement("select * from localidades where idProvincia = ? order by nombre asc");
 			statement.setLong(1, idProvincia);
 			
 			resultSet = statement.executeQuery();

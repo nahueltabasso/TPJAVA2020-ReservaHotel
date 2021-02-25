@@ -31,7 +31,7 @@ public class ReservaController {
 	public Reserva registrarReserva(Reserva reserva) throws Exception {
 		validReservaBeforeSave(reserva);
 		Reserva reservaDB = reservaRepository.save(reserva);
-		emailService.sendEmail(reservaDB.getPersona(), "La habitacion " + reserva.getHabitacion().getNumeroHabitacion() + " ha sido reservada!");
+		emailService.sendEmail(reservaDB.getPersona(), "La habitacion " + reserva.getHabitacion().getNumeroHabitacion() + " ha sido reservada!", "Aviso de Reserva");
 		return reservaRepository.save(reserva);
 	}
 	
@@ -45,7 +45,7 @@ public class ReservaController {
 		if (reserva == 0) {
 			throw new Exception("Ocurrio un error al momento de cancelar la reserva");
 		}
-		emailService.sendEmail(reservaDb.getPersona(), "La reserva ha sido cancelada!");
+		emailService.sendEmail(reservaDb.getPersona(), "La reserva ha sido cancelada!", "Aviso de Cancelacion");
 	}
 	
 	private void validReservaBeforeSave(Reserva reserva) throws Exception {

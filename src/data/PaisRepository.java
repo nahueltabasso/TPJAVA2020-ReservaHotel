@@ -21,7 +21,7 @@ public class PaisRepository {
 		try {
 			pais.setId(resultSet.getLong("id"));
 			pais.setNombre(resultSet.getNString("nombre"));
-			pais.setFechaCreacion(resultSet.getDate("fechaCreacion"));
+//			pais.setFechaCreacion(resultSet.getDate("fechaCreacion"));
 			pais.setFechaEliminacion(resultSet.getDate("fechaEliminacion"));
 		} catch(Exception e) {
 			e.printStackTrace();
@@ -40,7 +40,7 @@ public class PaisRepository {
 		List<Pais> paisList = new ArrayList<Pais>();
 		try {
 			connection = DataBaseConnection.getConnection();
-			statement = connection.prepareStatement("select * from paises");
+			statement = connection.prepareStatement("select * from paises order by nombre asc");
 
 			resultSet = statement.executeQuery();
 			while (resultSet.next()) {

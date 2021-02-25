@@ -17,7 +17,7 @@ public class EmailService {
 
     public EmailService() {}
 
-    public void sendEmail(Persona persona, String body) {
+    public void sendEmail(Persona persona, String body, String subject) {
         Properties prop = new Properties();
         prop.put("mail.smtp.auth", true);
         prop.put("mail.smtp.starttls.enable", "true");
@@ -36,7 +36,7 @@ public class EmailService {
                 Message message = new MimeMessage(session);
                 message.setFrom(new InternetAddress(username));
                 message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(persona.getEmail()));
-                message.setSubject("Registracion exitosa");
+                message.setSubject(subject);
                 message.setText(body);
                 Transport.send(message);
         } catch (Exception e) {

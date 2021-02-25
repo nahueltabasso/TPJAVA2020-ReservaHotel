@@ -36,8 +36,8 @@ public class ModificarContraseñaServlet extends HttpServlet {
 			// Response
 			response.setContentType("application/json");
 		    response.setCharacterEncoding("UTF-8");
-		    response.getWriter().print("Se ha modificado su contraseña!");
-			response.setStatus(201);
+		    response.getWriter().print(new Gson().toJson("{message:" + "La contraseña se ha modificado correctamente! }"));
+			response.setStatus(200);
 		    response.getWriter().flush();
 		} catch (Exception e) {
 			logger.log(Level.ERROR, e.getMessage());

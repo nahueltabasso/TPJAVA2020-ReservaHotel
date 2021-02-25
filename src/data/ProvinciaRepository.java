@@ -24,7 +24,7 @@ public class ProvinciaRepository {
 		try {
 			provincia.setId(resultSet.getLong("id"));
 			provincia.setNombre(resultSet.getNString("nombre"));
-			provincia.setFechaCreacion(resultSet.getDate("fechaCreacion"));
+//			provincia.setFechaCreacion(resultSet.getDate("fechaCreacion"));
 			provincia.setFechaEliminacion(resultSet.getDate("fechaEliminacion"));
 			Pais pais = paisRepository.findById(resultSet.getLong("idPais"));
 			provincia.setPais(pais);
@@ -47,7 +47,7 @@ public class ProvinciaRepository {
 		List<Provincia> provinciaList = new ArrayList<Provincia>();
 		try {
 			connection = DataBaseConnection.getConnection();
-			statement = connection.prepareStatement("select * from provincias where idPais = ?");
+			statement = connection.prepareStatement("select * from provincias where idPais = ? order by nombre asc");
 			statement.setLong(1, idPais);
 			
 			resultSet = statement.executeQuery();
