@@ -71,10 +71,16 @@ public class PersonaServlet extends HttpServlet {
 			Persona personaLogueada = (Persona) request.getSession().getAttribute("usuario");
 			
 			// Validamos que tipo de persona se esta creando de acuerdo al rol
-			if (persona.getRol().getNombreRol().equalsIgnoreCase(Rol.EMPLEADO) || persona.getRol().getNombreRol().equalsIgnoreCase(Rol.ADMINISTRADOR)) {
-				if (personaLogueada == null || !personaLogueada.getRol().getNombreRol().equalsIgnoreCase(Rol.ADMINISTRADOR)) {
+			if (personaLogueada == null) {
+				if (persona.getRol() != null) {
 					throw new AccessDeniedException("Acceso Denegado - Solo un perfil Administrador puede crear Empleados o Administradores");
 				}
+			} else {
+				if (persona.getRol().getNombreRol().equalsIgnoreCase(Rol.EMPLEADO) || persona.getRol().getNombreRol().equalsIgnoreCase(Rol.ADMINISTRADOR)) {
+					if (personaLogueada == null || !personaLogueada.getRol().getNombreRol().equalsIgnoreCase(Rol.ADMINISTRADOR)) {
+						throw new AccessDeniedException("Acceso Denegado - Solo un perfil Administrador puede crear Empleados o Administradores");
+					}
+				}				
 			}
 			
 			// Si llego aca implica que se cumplen con los permisos, persistimos el objeto
@@ -172,5 +178,4 @@ public class PersonaServlet extends HttpServlet {
 			response.getWriter().print(gson.toJson(mensaje));
 		}
 	}
-	
 }

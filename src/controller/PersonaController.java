@@ -30,7 +30,7 @@ public class PersonaController {
 		preValidation(persona, true);
 		validPersonaBeforeSave(persona);
 		Persona personaDB = personaRepository.save(persona);
-		emailService.sendEmail(personaDB, "Has completado la registracion!\nBienvenido al sistema!");
+		emailService.sendEmail(personaDB, "Has completado la registracion!\nBienvenido al sistema!", "Registracion exitosa!");
 		return personaDB;
 	}
 	
@@ -135,8 +135,7 @@ public class PersonaController {
 		}
 		
 		// Asignamos el rol correspondiente a la persona
-		List<Rol> roles = new ArrayList<Rol>();
-		roles.add(persona.getRol());
+		List<Rol> roles = setRol(persona.getRol());
 		if (Utils.isNullOrEmpty(roles)) {
 			persona.setRol(rolRepository.findByNombre(Rol.CLIENTE));
 			persona.setSueldoMensual(null);
@@ -179,5 +178,14 @@ public class PersonaController {
 			personaDb.setDescripcion(persona.getDescripcion());
 		}
 		return personaRepository.update(personaDb);
+	}
+	
+	private List<Rol> setRol(Rol rol) {
+		List<Rol> roles = new ArrayList<Rol>();
+		if (rol != null) {
+			roles.add(rol);
+			return roles;
+		} 
+		return roles;
 	}
 }
