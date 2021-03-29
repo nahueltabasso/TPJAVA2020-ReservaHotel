@@ -12,6 +12,7 @@ import data.PersonaRepository;
 import entities.PasswordResetToken;
 import entities.Persona;
 import exceptions.LoginException;
+import security.JwtManager;
 import utils.Hash;
 import utils.Utils;
 import utils.email.EmailService;
@@ -22,6 +23,7 @@ public class LoginController {
 	private PersonaRepository personaRepository = new PersonaRepository();
 	private PasswordResetTokenRepository prtRepository = new PasswordResetTokenRepository();
 	private EmailService emailService = new EmailService();
+	private JwtManager jwtManager = new JwtManager();
 	
 	public Persona login(Persona persona) throws Exception {
 		logger.log(Level.INFO, "Ingresa a login()");
@@ -32,6 +34,9 @@ public class LoginController {
 		if (!this.validarPassword(personaDB.getPassword(), persona.getPassword())) {
 			throw new LoginException("Usuario o Contraseña Incorrectas", Level.ERROR);
 		}
+		// Generamos el JsonWebToken(JWT) 
+		String jwt = jwtManager.createToken(personaDB.getEmail(), personaDB.getRol().getNombreRol());
+		personaDB.setToken(jwt);
 		return personaDB;
 	}
 	

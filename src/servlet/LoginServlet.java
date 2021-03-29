@@ -15,6 +15,7 @@ import com.google.gson.Gson;
 
 import controller.LoginController;
 import entities.Persona;
+import utils.HttpStatusCode;
 import utils.JsonToJavaObject;
 
 @WebServlet("/Login")
@@ -43,11 +44,11 @@ public class LoginServlet extends HttpServlet {
 			request.getSession().setAttribute("messageInfo", "Bienvenido al Sistema");
 		
 		    response.getWriter().print(new Gson().toJson(personaLogueada));
-		    response.setStatus(200);
+		    response.setStatus(HttpStatusCode.HTTP_STATUS_OK);
 		    response.getWriter().flush();
 		} catch (Exception e) {
 			logger.log(Level.ERROR, e.getMessage());
-			response.setStatus(500);
+			response.setStatus(HttpStatusCode.HTTP_STATUS_UNAUTHORIZED);
 		}
 	}
 

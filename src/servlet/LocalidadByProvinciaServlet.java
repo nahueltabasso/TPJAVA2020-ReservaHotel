@@ -1,7 +1,6 @@
 package servlet;
 
 import java.io.IOException;
-import java.nio.file.AccessDeniedException;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -18,7 +17,7 @@ import com.google.gson.Gson;
 
 import controller.LocalidadController;
 import entities.Localidad;
-import entities.Persona;
+import utils.HttpStatusCode;
 
 @WebServlet("/LocalidadByProvincia")
 public class LocalidadByProvinciaServlet extends HttpServlet {
@@ -37,6 +36,7 @@ public class LocalidadByProvinciaServlet extends HttpServlet {
 			
 			response.setContentType("application/json");
 		    response.setCharacterEncoding("UTF-8");
+		    response.setStatus(HttpStatusCode.HTTP_STATUS_OK);
 		    response.getWriter().print(gson.toJson(localidades));
 		    response.getWriter().flush();
 		} catch (Exception e) {

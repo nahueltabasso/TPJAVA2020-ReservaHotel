@@ -16,6 +16,7 @@ import com.google.gson.Gson;
 
 import controller.LoginController;
 import response.MessageErrorResponse;
+import utils.HttpStatusCode;
 
 @WebServlet("/SolicitarCambioContraseña")
 public class SolicitarCambioContraseñaServlet extends HttpServlet {
@@ -36,12 +37,12 @@ public class SolicitarCambioContraseñaServlet extends HttpServlet {
 			response.setContentType("application/json");
 		    response.setCharacterEncoding("UTF-8");
 		    response.getWriter().print(new Gson().toJson("{message:" + "Se te ha enviado un correo a tu casilla con los pasos a seguir! }"));
-			response.setStatus(200);
+			response.setStatus(HttpStatusCode.HTTP_STATUS_OK);
 		    response.getWriter().flush();
 		} catch (Exception e) {
 			logger.log(Level.ERROR, e.getMessage());
 			MessageErrorResponse mensaje = new MessageErrorResponse(e.getMessage());
-			response.setStatus(500);
+			response.setStatus(HttpStatusCode.HTTP_STATUS_INTERNAR_SERVER_ERROR);
 			response.getWriter().print(gson.toJson(mensaje));
 		}
 	}

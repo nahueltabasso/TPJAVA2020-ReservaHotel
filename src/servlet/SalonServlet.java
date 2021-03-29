@@ -17,6 +17,8 @@ import entities.Persona;
 import entities.Rol;
 import entities.Salon;
 import response.MessageErrorResponse;
+import utils.AppSession;
+import utils.HttpStatusCode;
 import utils.JsonToJavaObject;
 
 @WebServlet("/Salon")
@@ -31,7 +33,7 @@ public class SalonServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		Gson gson = new Gson();
 		try {
-			Persona personaLogueada = (Persona) request.getSession().getAttribute("usuario");
+			Persona personaLogueada = AppSession.getUsuarioLogueado(request);
 			
 			if (personaLogueada == null ) {
 				throw new AccessDeniedException("Acceso denegado!");
@@ -41,17 +43,17 @@ public class SalonServlet extends HttpServlet {
 			response.setContentType("application/json");
 		    response.setCharacterEncoding("UTF-8");
 		    response.getWriter().print(gson.toJson(salonList));
-			response.setStatus(200);
+			response.setStatus(HttpStatusCode.HTTP_STATUS_OK);
 		    response.getWriter().flush();
 		} catch (AccessDeniedException e) {
 			logger.log(Level.ERROR, e.getMessage());
 			MessageErrorResponse mensaje = new MessageErrorResponse(e.getMessage());
-			response.setStatus(401);
+			response.setStatus(HttpStatusCode.HTTP_STATUS_UNAUTHORIZED);
 			response.getWriter().print(gson.toJson(mensaje));
 		} catch (Exception e) {
 			logger.log(Level.ERROR, e.getMessage());
 			MessageErrorResponse mensaje = new MessageErrorResponse(e.getMessage());
-			response.setStatus(500);
+			response.setStatus(HttpStatusCode.HTTP_STATUS_INTERNAR_SERVER_ERROR);
 			response.getWriter().print(gson.toJson(mensaje));
 		}
 	}
@@ -66,10 +68,9 @@ public class SalonServlet extends HttpServlet {
 			salon = new Gson().fromJson(payloadRequest, Salon.class);
 			
 			// Recuperamos el usuario logueado
-			Persona personaLogueada = (Persona) request.getSession().getAttribute("usuario");
+			Persona personaLogueada = AppSession.getUsuarioLogueado(request);
 			
-			// Validamos que tipo de persona está creando el tipo de habitación
-			
+			// Validamos que tipo de persona está creando el tipo de habitación			
 			if (personaLogueada == null || personaLogueada.getRol().getNombreRol().equalsIgnoreCase(Rol.CLIENTE)) {
 				throw new AccessDeniedException("Acceso Denegado - Solo un perfil Administrador o Empleado puede crear Tipos de Habitaciones");
 			}
@@ -82,18 +83,17 @@ public class SalonServlet extends HttpServlet {
 			response.setContentType("application/json");
 		    response.setCharacterEncoding("UTF-8");
 		    response.getWriter().print(gson.toJson(salonDb));
-			response.setStatus(201);
+			response.setStatus(HttpStatusCode.HTTP_STATUS_CREATED);
 		    response.getWriter().flush();
-		    
 		} catch (AccessDeniedException e) {
 			logger.log(Level.ERROR, e.getMessage());
 			MessageErrorResponse mensaje = new MessageErrorResponse(e.getMessage());
-			response.setStatus(401);
+			response.setStatus(HttpStatusCode.HTTP_STATUS_UNAUTHORIZED);
 			response.getWriter().print(gson.toJson(mensaje));
 		} catch (Exception e) {
 			logger.log(Level.ERROR, e.getMessage());
 			MessageErrorResponse mensaje = new MessageErrorResponse(e.getMessage());
-			response.setStatus(500);
+			response.setStatus(HttpStatusCode.HTTP_STATUS_INTERNAR_SERVER_ERROR);
 			response.getWriter().print(gson.toJson(mensaje));
 		}
 	}
@@ -102,7 +102,7 @@ public class SalonServlet extends HttpServlet {
 	protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		Gson gson = new Gson();
 		try {
-			Persona personaLogueada = (Persona) request.getSession().getAttribute("usuario");
+			Persona personaLogueada = AppSession.getUsuarioLogueado(request);
 			
 			if (personaLogueada == null || personaLogueada.getRol().getNombreRol().equalsIgnoreCase(Rol.CLIENTE)) {
 				throw new AccessDeniedException("Acceso denegado!");
@@ -111,15 +111,19 @@ public class SalonServlet extends HttpServlet {
 			salonController.delete(id);
 			
 			logger.log(Level.INFO, "Salón eliminado con exito");
+			response.setContentType("application/json");
+		    response.setCharacterEncoding("UTF-8");
+			response.setStatus(HttpStatusCode.HTTP_STATUS_NO_CONTENT);
+		    response.getWriter().flush();		
 		} catch (AccessDeniedException e) {
 			logger.log(Level.ERROR, e.getMessage());
 			MessageErrorResponse mensaje = new MessageErrorResponse(e.getMessage());
-			response.setStatus(401);
+			response.setStatus(HttpStatusCode.HTTP_STATUS_UNAUTHORIZED);
 			response.getWriter().print(gson.toJson(mensaje));
 		} catch (Exception e) {
 			logger.log(Level.ERROR, e.getMessage());
 			MessageErrorResponse mensaje = new MessageErrorResponse(e.getMessage());
-			response.setStatus(500);
+			response.setStatus(HttpStatusCode.HTTP_STATUS_INTERNAR_SERVER_ERROR);
 			response.getWriter().print(gson.toJson(mensaje));
 		}
 	}
@@ -134,7 +138,7 @@ public class SalonServlet extends HttpServlet {
 			salon = new Gson().fromJson(payloadRequest, Salon.class);
 			
 			// Recuperamos el usuario logueado
-			Persona personaLogueada = (Persona) request.getSession().getAttribute("usuario");
+			Persona personaLogueada = AppSession.getUsuarioLogueado(request);
 			
 			// Validamos que el usuario este logueado
 			if (personaLogueada == null) {
@@ -155,15 +159,17 @@ public class SalonServlet extends HttpServlet {
 			response.setContentType("application/json");
 		    response.setCharacterEncoding("UTF-8");
 		    response.getWriter().print(gson.toJson(salonDB));
-		    response.setStatus(201);
+		    response.setStatus(HttpStatusCode.HTTP_STATUS_CREATED);
 		    response.getWriter().flush();
 		} catch (AccessDeniedException e) {
 			logger.log(Level.ERROR, e.getMessage());
 			MessageErrorResponse mensaje = new MessageErrorResponse(e.getMessage());
+		    response.setStatus(HttpStatusCode.HTTP_STATUS_UNAUTHORIZED);
 			response.getWriter().print(gson.toJson(mensaje));
 		} catch (Exception e) {
 			logger.log(Level.ERROR, e.getMessage());
 			MessageErrorResponse mensaje = new MessageErrorResponse(e.getMessage());
+		    response.setStatus(HttpStatusCode.HTTP_STATUS_INTERNAR_SERVER_ERROR);
 			response.getWriter().print(gson.toJson(mensaje));
 		}
 	}

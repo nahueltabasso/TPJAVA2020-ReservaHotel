@@ -12,6 +12,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import entities.Persona;
+import utils.AppSession;
+import utils.HttpStatusCode;
 
 @WebServlet("/Logout")
 public class LogoutServlet extends HttpServlet {
@@ -27,12 +29,13 @@ public class LogoutServlet extends HttpServlet {
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		try {
-			Persona personaLogueada = (Persona) request.getSession().getAttribute("usuario");
+			Persona personaLogueada = AppSession.getUsuarioLogueado(request);
 			request.getSession().invalidate();
 			logger.log(Level.INFO, "Usuario: " + personaLogueada.getNombre() + " " + personaLogueada.getApellido() + " logout exitoso!");
 			
 			response.setContentType("application/json");
 		    response.setCharacterEncoding("UTF-8");
+		    response.setStatus(HttpStatusCode.HTTP_STATUS_OK);
 		    response.getWriter().print("Logout con exito!");
 		    response.getWriter().flush();
 		} catch (Exception e) {

@@ -16,8 +16,7 @@ public class EstadoReservaRepository {
 		try {
 			estado.setId(resultSet.getLong("id"));
 			estado.setDescripcion(resultSet.getString("descripcion"));
-			estado.setFechaCreacion(resultSet.getDate("fechaCreacion"));
-			estado.setFechaEliminacion(resultSet.getDate("fechaEliminacion"));
+//			estado.setFechaCreacion(resultSet.getDate("fechaCreacion"));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
