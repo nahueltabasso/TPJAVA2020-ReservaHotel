@@ -13,7 +13,7 @@ public class EmailService {
     private String host = "smtp.gmail.com";
     private int port = 587;
     private String username = "ingresoegresoapprosario@gmail.com";
-    private String password = "imdatceffiuncmrm";
+    private String password = "rhoictioskmdfpzo";
 
     public EmailService() {}
 

@@ -27,7 +27,7 @@ public class ConfigCORS implements Filter {
 		// Autorizamos los dominios para que consuman los recursos de la Apis
 		((HttpServletResponse) servletResponse).addHeader("Access-Control-Allow-Origin", "*");
 		((HttpServletResponse) servletResponse).addHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE, HEAD");
-		((HttpServletResponse) servletResponse).addHeader("Access-Control-Allow-Headers", "X-PINGOTHER, Origin, X-Requested-With, Content-Type, Accept");
+		((HttpServletResponse) servletResponse).addHeader("Access-Control-Allow-Headers", "*");
 		((HttpServletResponse) servletResponse).addHeader("Access-Control-Max-Age", "1728000");
 		
 		HttpServletResponse response = (HttpServletResponse) servletResponse;
