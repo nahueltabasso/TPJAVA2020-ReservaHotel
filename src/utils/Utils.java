@@ -7,6 +7,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Utils {
+	
+	// Formato para los build de fechas
+	public static final String DATE_PATTERN = "yyyy-MM-dd";
 
 	/**
 	 * Devuelve true si una cadena contiene algun caracter numerico,

@@ -5,6 +5,7 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.logging.log4j.Level;
@@ -13,6 +14,7 @@ import org.apache.logging.log4j.Logger;
 import entities.Factura;
 import entities.Tarjeta;
 import exceptions.DataException;
+import utils.Utils;
 
 public class FacturaRepository {
 	
@@ -27,12 +29,21 @@ public class FacturaRepository {
 	private Factura buildFactura(ResultSet resultSet) {
 		Factura factura = new Factura();
 		Tarjeta tarjeta = new Tarjeta();
+		SimpleDateFormat sdf = new SimpleDateFormat(Utils.DATE_PATTERN);
+		Date fechaCreacion = null;
+		Date fechaEliminacion = null;
 		try {
 			factura.setId(resultSet.getLong("id"));
 			factura.setNumeroFactura(resultSet.getLong("numeroFactura"));
 			factura.setMonto(resultSet.getFloat("monto"));
-			factura.setFechaCreacion(resultSet.getDate("fechaCreacion"));
-			factura.setFechaEliminacion(resultSet.getDate("fechaEliminacion"));
+			fechaCreacion = resultSet.getDate("fechaCreacion");
+			fechaEliminacion = resultSet.getDate("fechaEliminacion");
+			if (fechaCreacion != null) {
+				factura.setFechaCreacion(sdf.parse(fechaCreacion.toString()));
+			} 
+			if (fechaEliminacion != null) {
+				factura.setFechaEliminacion(sdf.parse(fechaEliminacion.toString()));
+			}
 			tarjeta = tarjetaRepository.findById(resultSet.getLong("idTarjeta"));
 			factura.setTarjeta(tarjeta);
 		} catch (Exception e) {

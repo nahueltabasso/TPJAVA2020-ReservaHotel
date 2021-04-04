@@ -1,22 +1,38 @@
 package data;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 import entities.Rol;
+import utils.Utils;
 
 public class RolRepository {
 
 	private Rol buildRol(ResultSet rs) throws SQLException {
 		Rol rol = new Rol();
-		rol.setId(rs.getLong("id"));
-		rol.setNombreRol(rs.getString("nombreRol"));
-		rol.setFechaCreacion(rs.getDate("fechaCreacion"));
-		rol.setFechaEliminacion(rs.getDate("fechaEliminacion") != null ? rs.getDate("fechaEliminacion") : null);
+		SimpleDateFormat sdf = new SimpleDateFormat(Utils.DATE_PATTERN);
+		Date fechaCreacion = null;
+		Date fechaEliminacion = null;
+		try {
+			rol.setId(rs.getLong("id"));
+			rol.setNombreRol(rs.getString("nombreRol"));
+			fechaCreacion = rs.getDate("fechaCreacion");
+			fechaEliminacion = rs.getDate("fechaEliminacion");
+			if (fechaCreacion != null) {
+				rol.setFechaCreacion(sdf.parse(fechaCreacion.toString()));
+			} 
+			if (fechaEliminacion != null) {
+				rol.setFechaEliminacion(sdf.parse(fechaEliminacion.toString()));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		return rol;
 	}
 	

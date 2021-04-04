@@ -5,6 +5,7 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,6 +15,7 @@ import org.apache.logging.log4j.Logger;
 import entities.Salon;
 import entities.TipoHabitacion;
 import exceptions.DataException;
+import utils.Utils;
 
 public class SalonRepository {
 
@@ -26,6 +28,9 @@ private Logger logger = LogManager.getLogger(getClass());
 	 */
 	private Salon buildSalon(ResultSet resultSet) {
 		Salon salon = new Salon();
+		SimpleDateFormat sdf = new SimpleDateFormat(Utils.DATE_PATTERN);
+		Date fechaCreacion = null;
+		Date fechaEliminacion = null;
 		try {
 			salon.setId(resultSet.getLong("id"));
 			salon.setCapacidad(resultSet.getInt("capacidad"));
@@ -33,8 +38,14 @@ private Logger logger = LogManager.getLogger(getClass());
 			salon.setDescripcion(resultSet.getNString("descripcion"));
 			salon.setFoto(resultSet.getBlob("foto"));
 			salon.setPrecioPorDia(resultSet.getDouble("precioPorDia"));
-			salon.setFechaCreacion(resultSet.getDate("fechaCreacion"));
-			salon.setFechaEliminacion(resultSet.getDate("fechaEliminacion"));
+			fechaCreacion = resultSet.getDate("fechaCreacion");
+			fechaEliminacion = resultSet.getDate("fechaEliminacion");
+			if (fechaCreacion != null) {
+				salon.setFechaCreacion(sdf.parse(fechaCreacion.toString()));
+			} 
+			if (fechaEliminacion != null) {
+				salon.setFechaEliminacion(sdf.parse(fechaEliminacion.toString()));
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

@@ -1,13 +1,15 @@
 package data;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
-
 import entities.Pais;
+import utils.Utils;
 
 public class PaisRepository {
 	
@@ -18,11 +20,20 @@ public class PaisRepository {
 	 */
 	private Pais buildPais(ResultSet resultSet) {
 		Pais pais = new Pais();
+		SimpleDateFormat sdf = new SimpleDateFormat(Utils.DATE_PATTERN);
+		Date fechaCreacion = null;
+		Date fechaEliminacion = null;
 		try {
 			pais.setId(resultSet.getLong("id"));
 			pais.setNombre(resultSet.getNString("nombre"));
-//			pais.setFechaCreacion(resultSet.getDate("fechaCreacion"));
-			pais.setFechaEliminacion(resultSet.getDate("fechaEliminacion"));
+			fechaCreacion = resultSet.getDate("fechaCreacion");
+			fechaEliminacion = resultSet.getDate("fechaEliminacion");
+			if (fechaCreacion != null) {
+				pais.setFechaCreacion(sdf.parse(fechaCreacion.toString()));
+			} 
+			if (fechaEliminacion != null) {
+				pais.setFechaEliminacion(sdf.parse(fechaEliminacion.toString()));
+			}
 		} catch(Exception e) {
 			e.printStackTrace();
 		}

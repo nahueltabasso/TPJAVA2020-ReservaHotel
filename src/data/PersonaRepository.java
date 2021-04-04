@@ -5,6 +5,7 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,6 +17,7 @@ import entities.Domicilio;
 import entities.Persona;
 import entities.Rol;
 import exceptions.DataException;
+import utils.Utils;
 
 public class PersonaRepository {
 
@@ -27,6 +29,9 @@ public class PersonaRepository {
 		Persona persona = new Persona();
 		Rol rol = new Rol();
 		Domicilio domicilio = new Domicilio();
+		SimpleDateFormat sdf = new SimpleDateFormat(Utils.DATE_PATTERN);
+		Date fechaCreacion = null;
+		Date fechaEliminacion = null;
 		try {
 			persona.setId(rs.getLong("id"));
 			persona.setNombre(rs.getString("nombre"));
@@ -38,7 +43,14 @@ public class PersonaRepository {
 			persona.setCuit(rs.getString("cuit"));
 			persona.setTelefono(rs.getLong("telefono"));
 			persona.setGenero(rs.getString("genero"));
-			persona.setFechaCreacion(rs.getDate("fechaCreacion"));
+			fechaCreacion = rs.getDate("fechaCreacion");
+			fechaEliminacion = rs.getDate("fechaEliminacion");
+			if (fechaCreacion != null) {
+				persona.setFechaCreacion(sdf.parse(fechaCreacion.toString()));
+			} 
+			if (fechaEliminacion != null) {
+				persona.setFechaEliminacion(sdf.parse(fechaEliminacion.toString()));
+			}
 			persona.setSueldoMensual(rs.getDouble("sueldoMensual"));
 			persona.setDescripcion(rs.getString("descripcion"));
 			persona.setLegajo(rs.getLong("legajo"));

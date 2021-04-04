@@ -5,6 +5,7 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.logging.log4j.Level;
@@ -12,6 +13,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import entities.Habitacion;
 import exceptions.DataException;
+import utils.Utils;
 
 public class HabitacionRepository {
 	
@@ -25,11 +27,20 @@ public class HabitacionRepository {
 	 */
 	private Habitacion buildHabitacion(ResultSet resultSet) {
 		Habitacion habitacion = new Habitacion();
+		SimpleDateFormat sdf = new SimpleDateFormat(Utils.DATE_PATTERN);
+		Date fechaCreacion = null;
+		Date fechaEliminacion = null;
 		try {
 			habitacion.setId(resultSet.getLong("id"));
 			habitacion.setNumeroHabitacion(resultSet.getInt("numeroHabitacion"));
-			habitacion.setFechaCreacion(resultSet.getDate("fechaCreacion"));
-			habitacion.setFechaEliminacion(resultSet.getDate("fechaEliminacion"));
+			fechaCreacion = resultSet.getDate("fechaCreacion");
+			fechaEliminacion = resultSet.getDate("fechaEliminacion");
+			if (fechaCreacion != null) {
+				habitacion.setFechaCreacion(sdf.parse(fechaCreacion.toString()));
+			} 
+			if (fechaEliminacion != null) {
+				habitacion.setFechaEliminacion(sdf.parse(fechaEliminacion.toString()));
+			}
 			Long idTipoHabitacion = resultSet.getLong("idTipoHabitacion");
 			habitacion.setTipoHabitacion(tipoHabitacionRepository.findById(idTipoHabitacion));
 		} catch (Exception e) {

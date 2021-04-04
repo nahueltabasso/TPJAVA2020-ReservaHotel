@@ -5,6 +5,7 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.logging.log4j.Level;
@@ -13,6 +14,7 @@ import org.apache.logging.log4j.Logger;
 import entities.Domicilio;
 import entities.Localidad;
 import exceptions.DataException;
+import utils.Utils;
 
 public class DomicilioRepository {
 	
@@ -26,14 +28,23 @@ public class DomicilioRepository {
 	 */
 	private Domicilio buildDomicilio(ResultSet resultSet) {
 		Domicilio domicilio = new Domicilio();
+		SimpleDateFormat sdf = new SimpleDateFormat(Utils.DATE_PATTERN);
+		Date fechaCreacion = null;
+		Date fechaEliminacion = null;
 		try {
 			domicilio.setId(resultSet.getLong("id"));
 			domicilio.setCalle(resultSet.getNString("calle"));
 			domicilio.setNumero(resultSet.getNString("numero"));
 			domicilio.setPiso(resultSet.getNString("piso"));
 			domicilio.setDepartamento(resultSet.getNString("departamento"));
-			domicilio.setFechaCreacion(resultSet.getDate("fechaCreacion"));
-			domicilio.setFechaEliminacion(resultSet.getDate("fechaEliminacion"));
+			fechaCreacion = resultSet.getDate("fechaCreacion");
+			fechaEliminacion = resultSet.getDate("fechaEliminacion");
+			if (fechaCreacion != null) {
+				domicilio.setFechaCreacion(sdf.parse(fechaCreacion.toString()));
+			} 
+			if (fechaEliminacion != null) {
+				domicilio.setFechaEliminacion(sdf.parse(fechaEliminacion.toString()));
+			}
 			Localidad localidad = localidadRepository.findById(resultSet.getLong("idLocalidad"));
 			domicilio.setLocalidad(localidad);
 		} catch (Exception e) {

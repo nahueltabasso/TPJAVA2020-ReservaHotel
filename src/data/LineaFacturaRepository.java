@@ -5,6 +5,7 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.logging.log4j.Level;
@@ -12,6 +13,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import entities.LineaFactura;
 import exceptions.DataException;
+import utils.Utils;
 
 public class LineaFacturaRepository {
 	
@@ -25,12 +27,21 @@ public class LineaFacturaRepository {
 	 */
 	private LineaFactura buildLineaFactura(ResultSet resultSet) {
 		LineaFactura lineaFactura = new LineaFactura();
+		SimpleDateFormat sdf = new SimpleDateFormat(Utils.DATE_PATTERN);
+		Date fechaCreacion = null;
+		Date fechaEliminacion = null;
 		try {
 			lineaFactura.setId(resultSet.getLong("id"));
 			lineaFactura.setCantidad(resultSet.getInt("cantidad"));
 			lineaFactura.setMonto(resultSet.getFloat("monto"));
-			lineaFactura.setFechaCreacion(resultSet.getDate("fechaCreacion"));
-			lineaFactura.setFechaEliminacion(resultSet.getDate("fechaEliminacion"));
+			fechaCreacion = resultSet.getDate("fechaCreacion");
+			fechaEliminacion = resultSet.getDate("fechaEliminacion");
+			if (fechaCreacion != null) {
+				lineaFactura.setFechaCreacion(sdf.parse(fechaCreacion.toString()));
+			} 
+			if (fechaEliminacion != null) {
+				lineaFactura.setFechaEliminacion(sdf.parse(fechaEliminacion.toString()));
+			}
 			Long idFactura = resultSet.getLong("idFactura");
 			lineaFactura.setFactura(facturaRepository.findById(idFactura));
 		} catch (Exception e) {

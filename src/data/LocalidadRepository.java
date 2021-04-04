@@ -1,13 +1,16 @@
 package data;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import entities.Localidad;
 import entities.Provincia;
+import utils.Utils;
 
 
 public class LocalidadRepository {
@@ -21,12 +24,21 @@ public class LocalidadRepository {
 	 */
 	private Localidad buildLocalidad(ResultSet resultSet) {
 		Localidad localidad = new Localidad();
+		SimpleDateFormat sdf = new SimpleDateFormat(Utils.DATE_PATTERN);
+		Date fechaCreacion = null;
+		Date fechaEliminacion = null;
 		try {
 			localidad.setId(resultSet.getLong("id"));
 			localidad.setNombre(resultSet.getString("nombre"));
 			localidad.setCodigoPostal(resultSet.getString("codigoPostal"));
-//			localidad.setFechaCreacion(resultSet.getDate("fechaCreacion"));
-			localidad.setFechaEliminacion(resultSet.getDate("fechaEliminacion"));
+			fechaCreacion = resultSet.getDate("fechaCreacion");
+			fechaEliminacion = resultSet.getDate("fechaEliminacion");
+			if (fechaCreacion != null) {
+				localidad.setFechaCreacion(sdf.parse(fechaCreacion.toString()));
+			} 
+			if (fechaEliminacion != null) {
+				localidad.setFechaEliminacion(sdf.parse(fechaEliminacion.toString()));
+			}
 			Provincia provincia = provinciaRepository.findById(resultSet.getLong("idProvincia"));
 			localidad.setProvincia(provincia);
 		} catch (Exception e) {

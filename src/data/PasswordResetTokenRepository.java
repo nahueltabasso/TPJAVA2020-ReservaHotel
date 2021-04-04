@@ -42,7 +42,7 @@ public class PasswordResetTokenRepository {
 			statement.executeUpdate();
 			resultSet = statement.getGeneratedKeys();
 			
-			// Validamos que nos devuelva el id para retornar el domicilio
+			// Validamos que nos devuelva el id 
 			if (resultSet != null && resultSet.next()) {
 				prt.setId(resultSet.getLong(1));
 			}

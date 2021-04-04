@@ -1,14 +1,17 @@
 package data;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 import entities.Pais;
 import entities.Provincia;
+import utils.Utils;
 
 public class ProvinciaRepository {
 
@@ -21,11 +24,20 @@ public class ProvinciaRepository {
 	 */
 	private Provincia buildProvincia(ResultSet resultSet) {
 		Provincia provincia = new Provincia();
+		SimpleDateFormat sdf = new SimpleDateFormat(Utils.DATE_PATTERN);
+		Date fechaCreacion = null;
+		Date fechaEliminacion = null;
 		try {
 			provincia.setId(resultSet.getLong("id"));
 			provincia.setNombre(resultSet.getNString("nombre"));
-//			provincia.setFechaCreacion(resultSet.getDate("fechaCreacion"));
-			provincia.setFechaEliminacion(resultSet.getDate("fechaEliminacion"));
+			fechaCreacion = resultSet.getDate("fechaCreacion");
+			fechaEliminacion = resultSet.getDate("fechaEliminacion");
+			if (fechaCreacion != null) {
+				provincia.setFechaCreacion(sdf.parse(fechaCreacion.toString()));
+			} 
+			if (fechaEliminacion != null) {
+				provincia.setFechaEliminacion(sdf.parse(fechaEliminacion.toString()));
+			}
 			Pais pais = paisRepository.findById(resultSet.getLong("idPais"));
 			provincia.setPais(pais);
 		} catch (Exception e) {

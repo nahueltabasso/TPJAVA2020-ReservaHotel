@@ -7,12 +7,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-
+import utils.Utils;
+import java.text.SimpleDateFormat;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import entities.Habitacion;
 import entities.TipoHabitacion;
 import exceptions.DataException;
 
@@ -20,6 +19,8 @@ public class TipoHabitacionRepository {
 	
 	private Logger logger = LogManager.getLogger(getClass());
 	
+	
+		
 	/**
 	 * Metodo que construye el objeto TipoHabitacion
 	 * @param resultSet
@@ -27,6 +28,9 @@ public class TipoHabitacionRepository {
 	 */
 	private TipoHabitacion buildTipoHabitacion(ResultSet resultSet) {
 		TipoHabitacion tipoHabitacion = new TipoHabitacion();
+		SimpleDateFormat sdf = new SimpleDateFormat(Utils.DATE_PATTERN);
+		Date fechaCreacion = null;
+		Date fechaEliminacion = null;
 		try {
 			tipoHabitacion.setId(resultSet.getLong("id"));
 			tipoHabitacion.setDescripcion(resultSet.getNString("descripcion"));
@@ -34,8 +38,22 @@ public class TipoHabitacionRepository {
 			tipoHabitacion.setFoto(resultSet.getBlob("foto"));
 			tipoHabitacion.setDenominacion(resultSet.getNString("denominacion"));
 			tipoHabitacion.setPrecioPorDia(resultSet.getDouble("precioPorDia"));
-			tipoHabitacion.setFechaCreacion(resultSet.getDate("fechaCreacion"));
-			tipoHabitacion.setFechaEliminacion(resultSet.getDate("fechaEliminacion"));
+			fechaCreacion = resultSet.getDate("fechaCreacion");
+			fechaEliminacion = resultSet.getDate("fechaEliminacion");
+			if (fechaCreacion != null) {
+				tipoHabitacion.setFechaCreacion(sdf.parse(fechaCreacion.toString()));
+			} 
+			if (fechaEliminacion != null) {
+				tipoHabitacion.setFechaEliminacion(sdf.parse(fechaEliminacion.toString()));
+			}
+			
+			System.out.println();
+			System.out.println(resultSet.getDate("fechaCreacion"));
+			System.out.println(resultSet.getDate("fechaCreacion").toString());
+			System.out.println(tipoHabitacion.getFechaCreacion());
+			System.out.println(tipoHabitacion.getFechaEliminacion());
+			System.out.println();
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

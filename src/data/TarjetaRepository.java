@@ -5,6 +5,7 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.logging.log4j.Level;
@@ -14,6 +15,7 @@ import org.apache.logging.log4j.Logger;
 import entities.Salon;
 import entities.Tarjeta;
 import exceptions.DataException;
+import utils.Utils;
 
 public class TarjetaRepository {
 	
@@ -27,14 +29,27 @@ public class TarjetaRepository {
 	 */
 	private Tarjeta buildTarjeta(ResultSet resultSet) {
 		Tarjeta tarjeta = new Tarjeta();
+		SimpleDateFormat sdf = new SimpleDateFormat(Utils.DATE_PATTERN);
+		Date fechaCreacion = null;
+		Date fechaEliminacion = null;
+		Date fechaVencimiento = null;
 		try {
 			tarjeta.setId(resultSet.getLong("id"));
 			tarjeta.setNumeroTarjeta(resultSet.getLong("numeroTarjeta"));
-			tarjeta.setFechaVencimiento(resultSet.getDate("fechaVencimiento"));
+			fechaVencimiento = resultSet.getDate("fechaVencimiento");
+			if (fechaVencimiento != null) {
+				tarjeta.setFechaVencimiento(sdf.parse(fechaVencimiento.toString()));
+			}
 			tarjeta.setNombreTarjeta(resultSet.getNString("nombreTarjeta"));
 			tarjeta.setMonto(resultSet.getFloat("monto"));
-			tarjeta.setFechaCreacion(resultSet.getDate("fechaCreacion"));
-			tarjeta.setFechaEliminacion(resultSet.getDate("fechaEliminacion"));
+			fechaCreacion = resultSet.getDate("fechaCreacion");
+			fechaEliminacion = resultSet.getDate("fechaEliminacion");
+			if (fechaCreacion != null) {
+				tarjeta.setFechaCreacion(sdf.parse(fechaCreacion.toString()));
+			} 
+			if (fechaEliminacion != null) {
+				tarjeta.setFechaEliminacion(sdf.parse(fechaEliminacion.toString()));
+			}
 			Long idPersona = resultSet.getLong("idPersona");
 			tarjeta.setPersona(personaRepository.findById(idPersona));
 		} catch (Exception e) {

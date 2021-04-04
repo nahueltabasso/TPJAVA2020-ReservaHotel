@@ -5,15 +5,16 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import entities.EstadoReserva;
 import entities.Reserva;
 import exceptions.DataException;
+import utils.Utils;
 
 public class ReservaRepository {
 	
@@ -30,15 +31,40 @@ public class ReservaRepository {
 	 */
 	private Reserva buildReserva(ResultSet resultSet) {
 		Reserva reserva = new Reserva();
+		SimpleDateFormat sdf = new SimpleDateFormat(Utils.DATE_PATTERN);
+		Date fechaCreacion = null;
+		Date fechaEliminacion = null;
+		Date fechaReserva = null;
+		Date fechaCancelacion = null;
+		Date fechaEntrada = null;
+		Date fechaSalida = null;
 		try {
 			reserva.setId(resultSet.getLong("id"));
-			reserva.setFechaReserva(resultSet.getDate("fechaReserva"));
-			reserva.setFechaCancelacion(resultSet.getDate("fechaCancelacion"));
+			fechaReserva = resultSet.getDate("fechaReserva");
+			fechaCancelacion = resultSet.getDate("fechaCancelacion");
+			fechaEntrada = resultSet.getDate("fechaEntrada");
+			fechaSalida = resultSet.getDate("fechaSalida");
+			fechaCreacion = resultSet.getDate("fechaCreacion");
+			fechaEliminacion = resultSet.getDate("fechaEliminacion");
+			if (fechaReserva != null) {
+				reserva.setFechaReserva(sdf.parse(fechaReserva.toString()));
+			} 
+			if (fechaCancelacion != null) {
+				reserva.setFechaCancelacion(sdf.parse(fechaCancelacion.toString()));
+			}
+			if (fechaEntrada != null) {
+				reserva.setFechaEntrada(sdf.parse(fechaEntrada.toString()));
+			} 
+			if (fechaSalida != null) {
+				reserva.setFechaSalida(sdf.parse(fechaSalida.toString()));
+			}
+			if (fechaCreacion != null) {
+				reserva.setFechaCreacion(sdf.parse(fechaCreacion.toString()));
+			} 
+			if (fechaEliminacion != null) {
+				reserva.setFechaEliminacion(sdf.parse(fechaEliminacion.toString()));
+			}
 			reserva.setCantDias(resultSet.getInt("cantDias"));
-			reserva.setFechaEntrada(resultSet.getDate("fechaEntrada"));
-			reserva.setFechaSalida(resultSet.getDate("fechaSalida"));
-			reserva.setFechaCreacion(resultSet.getDate("fechaCreacion"));
-			reserva.setFechaEliminacion(resultSet.getDate("fechaEliminacion"));
 			Long idPersona = resultSet.getLong("idPersona");
 			reserva.setPersona(personaRepository.findById(idPersona));
 			Long idEstadoReserva = resultSet.getLong("idEstadoReserva");
