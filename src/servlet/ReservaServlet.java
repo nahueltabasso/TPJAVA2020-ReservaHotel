@@ -22,6 +22,8 @@ import entities.Persona;
 import entities.Reserva;
 import entities.Rol;
 import response.MessageErrorResponse;
+import utils.AppSession;
+import utils.HttpStatusCode;
 import utils.JsonToJavaObject;
 
 @WebServlet("/Reserva")
@@ -38,7 +40,7 @@ public class ReservaServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		Gson gson = new Gson();
 		try {
-			Persona personaLogueada = (Persona) request.getSession().getAttribute("usuario");
+			Persona personaLogueada = AppSession.getUsuarioLogueado(request);
 			
 			if (personaLogueada == null) {
 				throw new AccessDeniedException("Acceso denegado!");
@@ -54,17 +56,17 @@ public class ReservaServlet extends HttpServlet {
 			response.setContentType("application/json");
 		    response.setCharacterEncoding("UTF-8");
 		    response.getWriter().print(gson.toJson(reservaList));
-			response.setStatus(200);
+			response.setStatus(HttpStatusCode.HTTP_STATUS_OK);
 		    response.getWriter().flush();
 		} catch (AccessDeniedException e) {
 			logger.log(Level.ERROR, e.getMessage());
 			MessageErrorResponse mensaje = new MessageErrorResponse(e.getMessage());
-			response.setStatus(401);
+			response.setStatus(HttpStatusCode.HTTP_STATUS_UNAUTHORIZED);
 			response.getWriter().print(gson.toJson(mensaje));
 		} catch (Exception e) {
 			logger.log(Level.ERROR, e.getMessage());
 			MessageErrorResponse mensaje = new MessageErrorResponse(e.getMessage());
-			response.setStatus(500);
+			response.setStatus(HttpStatusCode.HTTP_STATUS_INTERNAR_SERVER_ERROR);
 			response.getWriter().print(gson.toJson(mensaje));
 		}
 	}
@@ -78,7 +80,7 @@ public class ReservaServlet extends HttpServlet {
 			reserva = new Gson().fromJson(payloadRequest, Reserva.class);
 			
 			// Recuperamos el usuario logueado
-			Persona personaLogueada = (Persona) request.getSession().getAttribute("usuario");
+			Persona personaLogueada = AppSession.getUsuarioLogueado(request);
 			
 			// Validamos que tipo de persona se esta creando de acuerdo al rol
 			if (personaLogueada == null) {
@@ -92,17 +94,17 @@ public class ReservaServlet extends HttpServlet {
 			response.setContentType("application/json");
 		    response.setCharacterEncoding("UTF-8");
 		    response.getWriter().print(gson.toJson(reservaDb));
-			response.setStatus(201);
+			response.setStatus(HttpStatusCode.HTTP_STATUS_CREATED);
 		    response.getWriter().flush();
 		} catch (AccessDeniedException e) {
 			logger.log(Level.ERROR, e.getMessage());
 			MessageErrorResponse mensaje = new MessageErrorResponse(e.getMessage());
-			response.setStatus(401);
+			response.setStatus(HttpStatusCode.HTTP_STATUS_UNAUTHORIZED);
 			response.getWriter().print(gson.toJson(mensaje));
 		} catch (Exception e) {
 			logger.log(Level.ERROR, e.getMessage());
 			MessageErrorResponse mensaje = new MessageErrorResponse(e.getMessage());
-			response.setStatus(500);
+			response.setStatus(HttpStatusCode.HTTP_STATUS_INTERNAR_SERVER_ERROR);
 			response.getWriter().print(gson.toJson(mensaje));
 		}
 	}
@@ -110,7 +112,7 @@ public class ReservaServlet extends HttpServlet {
 	protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		Gson gson = new Gson();
 		try {
-			Persona personaLogueada = (Persona) request.getSession().getAttribute("usuario");
+			Persona personaLogueada = AppSession.getUsuarioLogueado(request);
 			
 			if (personaLogueada == null) {
 				throw new AccessDeniedException("Acceso denegado!");
@@ -118,17 +120,20 @@ public class ReservaServlet extends HttpServlet {
 			Long id = Long.parseLong(request.getParameter("idReserva"));
 			reservaCtrl.delete(id);
 			logger.log(Level.INFO, "Reserva eliminada con exito");
+			response.setContentType("application/json");
+		    response.setCharacterEncoding("UTF-8");
+			response.setStatus(HttpStatusCode.HTTP_STATUS_NO_CONTENT);
+		    response.getWriter().flush();		
 		} catch (AccessDeniedException e) {
 			logger.log(Level.ERROR, e.getMessage());
 			MessageErrorResponse mensaje = new MessageErrorResponse(e.getMessage());
-			response.setStatus(401);
+			response.setStatus(HttpStatusCode.HTTP_STATUS_UNAUTHORIZED);
 			response.getWriter().print(gson.toJson(mensaje));
 		} catch (Exception e) {
 			logger.log(Level.ERROR, e.getMessage());
 			MessageErrorResponse mensaje = new MessageErrorResponse(e.getMessage());
-			response.setStatus(500);
+			response.setStatus(HttpStatusCode.HTTP_STATUS_INTERNAR_SERVER_ERROR);
 			response.getWriter().print(gson.toJson(mensaje));
 		}
-	
 	}
 }

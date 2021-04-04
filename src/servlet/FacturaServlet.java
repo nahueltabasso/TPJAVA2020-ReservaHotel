@@ -17,6 +17,8 @@ import entities.Persona;
 import entities.Rol;
 import entities.Factura;
 import response.MessageErrorResponse;
+import utils.AppSession;
+import utils.HttpStatusCode;
 import utils.JsonToJavaObject;
 
 @WebServlet("/Factura")
@@ -31,7 +33,7 @@ public class FacturaServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		Gson gson = new Gson();
 		try {
-			Persona personaLogueada = (Persona) request.getSession().getAttribute("usuario");
+			Persona personaLogueada = AppSession.getUsuarioLogueado(request);
 			
 			if (personaLogueada == null ) {
 				throw new AccessDeniedException("Acceso denegado!");
@@ -41,17 +43,17 @@ public class FacturaServlet extends HttpServlet {
 			response.setContentType("application/json");
 		    response.setCharacterEncoding("UTF-8");
 		    response.getWriter().print(gson.toJson(facturaList));
-			response.setStatus(200);
+			response.setStatus(HttpStatusCode.HTTP_STATUS_OK);
 		    response.getWriter().flush();
 		} catch (AccessDeniedException e) {
 			logger.log(Level.ERROR, e.getMessage());
 			MessageErrorResponse mensaje = new MessageErrorResponse(e.getMessage());
-			response.setStatus(401);
+			response.setStatus(HttpStatusCode.HTTP_STATUS_UNAUTHORIZED);
 			response.getWriter().print(gson.toJson(mensaje));
 		} catch (Exception e) {
 			logger.log(Level.ERROR, e.getMessage());
 			MessageErrorResponse mensaje = new MessageErrorResponse(e.getMessage());
-			response.setStatus(500);
+			response.setStatus(HttpStatusCode.HTTP_STATUS_INTERNAR_SERVER_ERROR);
 			response.getWriter().print(gson.toJson(mensaje));
 		}
 	}
@@ -66,10 +68,9 @@ public class FacturaServlet extends HttpServlet {
 			factura = new Gson().fromJson(payloadRequest, Factura.class);
 			
 			// Recuperamos el usuario logueado
-			Persona personaLogueada = (Persona) request.getSession().getAttribute("usuario");
+			Persona personaLogueada = AppSession.getUsuarioLogueado(request);
 			
 			// Validamos que tipo de persona está creando la factura
-			
 			if (personaLogueada == null || personaLogueada.getRol().getNombreRol().equalsIgnoreCase(Rol.CLIENTE)) {
 				throw new AccessDeniedException("Acceso Denegado - Solo un perfil Administrador o Empleado puede crear Facturas");
 			}
@@ -82,18 +83,18 @@ public class FacturaServlet extends HttpServlet {
 			response.setContentType("application/json");
 		    response.setCharacterEncoding("UTF-8");
 		    response.getWriter().print(gson.toJson(facturaDB));
-			response.setStatus(201);
+			response.setStatus(HttpStatusCode.HTTP_STATUS_CREATED);
 		    response.getWriter().flush();
 		    
 		} catch (AccessDeniedException e) {
 			logger.log(Level.ERROR, e.getMessage());
 			MessageErrorResponse mensaje = new MessageErrorResponse(e.getMessage());
-			response.setStatus(401);
+			response.setStatus(HttpStatusCode.HTTP_STATUS_UNAUTHORIZED);
 			response.getWriter().print(gson.toJson(mensaje));
 		} catch (Exception e) {
 			logger.log(Level.ERROR, e.getMessage());
 			MessageErrorResponse mensaje = new MessageErrorResponse(e.getMessage());
-			response.setStatus(500);
+			response.setStatus(HttpStatusCode.HTTP_STATUS_INTERNAR_SERVER_ERROR);
 			response.getWriter().print(gson.toJson(mensaje));
 		}
 	}
@@ -102,7 +103,7 @@ public class FacturaServlet extends HttpServlet {
 	protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		Gson gson = new Gson();
 		try {
-			Persona personaLogueada = (Persona) request.getSession().getAttribute("usuario");
+			Persona personaLogueada = AppSession.getUsuarioLogueado(request);
 			
 			if (personaLogueada == null || personaLogueada.getRol().getNombreRol().equalsIgnoreCase(Rol.CLIENTE)) {
 				throw new AccessDeniedException("Acceso denegado!");
@@ -110,66 +111,22 @@ public class FacturaServlet extends HttpServlet {
 			Long id = Long.parseLong(request.getParameter("idFactura"));
 			facturaController.delete(id);
 			logger.log(Level.INFO, "Factura eliminada con exito");
-		} catch (AccessDeniedException e) {
-			logger.log(Level.ERROR, e.getMessage());
-			MessageErrorResponse mensaje = new MessageErrorResponse(e.getMessage());
-			response.setStatus(401);
-			response.getWriter().print(gson.toJson(mensaje));
-		} catch (Exception e) {
-			logger.log(Level.ERROR, e.getMessage());
-			MessageErrorResponse mensaje = new MessageErrorResponse(e.getMessage());
-			response.setStatus(500);
-			response.getWriter().print(gson.toJson(mensaje));
-		}
-	}
-	
-	/* Las facturas no se pueden actualizar
-	
-	@Override
-	protected void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		Gson gson = new Gson();
-		try {
-			String payloadRequest = JsonToJavaObject.getBody(request);
-			
-			Factura factura = new Factura();
-			factura = new Gson().fromJson(payloadRequest, Factura.class);
-			
-			// Recuperamos el usuario logueado
-			Persona personaLogueada = (Persona) request.getSession().getAttribute("usuario");
-			
-			// Validamos que el usuario este logueado
-			if (personaLogueada == null) {
-				throw new AccessDeniedException("Acceso Denegado");
-			}
-
-			// Si el usuario logueado es un cliente, no puede modificar las facturaes
-			if (personaLogueada.getRol().getNombreRol().equalsIgnoreCase(Rol.CLIENTE)) {
-				throw new AccessDeniedException("Acceso Denegado - Un perfil con rol Cliente no puede modificar los datos las Facturas!");
- 			}
-			
-			// Si llego aca implica que se cumplen con los permisos, persistimos el objeto
-			Long id = Long.parseLong(request.getParameter("idFactura"));
-			Factura facturaDB = facturaController.actualizarFactura(id, factura);
-			logger.log(Level.INFO, "Factura: " + facturaDB.getNumeroFactura() + " actualizada con exito!");
-
-			// Response
 			response.setContentType("application/json");
 		    response.setCharacterEncoding("UTF-8");
-		    response.getWriter().print(gson.toJson(facturaDB));
-		    response.setStatus(201);
+			response.setStatus(HttpStatusCode.HTTP_STATUS_NO_CONTENT);
 		    response.getWriter().flush();
 		} catch (AccessDeniedException e) {
 			logger.log(Level.ERROR, e.getMessage());
 			MessageErrorResponse mensaje = new MessageErrorResponse(e.getMessage());
+			response.setStatus(HttpStatusCode.HTTP_STATUS_UNAUTHORIZED);
 			response.getWriter().print(gson.toJson(mensaje));
 		} catch (Exception e) {
 			logger.log(Level.ERROR, e.getMessage());
 			MessageErrorResponse mensaje = new MessageErrorResponse(e.getMessage());
+			response.setStatus(HttpStatusCode.HTTP_STATUS_INTERNAR_SERVER_ERROR);
 			response.getWriter().print(gson.toJson(mensaje));
 		}
 	}
 	
-	*/
-
-
+	/* Las facturas no se pueden actualizar */
 }

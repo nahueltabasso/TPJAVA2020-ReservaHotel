@@ -19,6 +19,8 @@ import com.google.gson.Gson;
 import controller.EstadoReservaController;
 import entities.EstadoReserva;
 import entities.Persona;
+import utils.AppSession;
+import utils.HttpStatusCode;
 
 @WebServlet("/EstadoReservaList")
 public class EstadoReservaList extends HttpServlet {
@@ -32,7 +34,7 @@ public class EstadoReservaList extends HttpServlet {
 		Gson gson = new Gson();
 		
 		try {
-			Persona personaLogueada = (Persona) request.getSession().getAttribute("usuario");
+			Persona personaLogueada = AppSession.getUsuarioLogueado(request);
 			if (personaLogueada == null) {
 				// Excepcion 
 				throw new AccessDeniedException("Acceso denegado");
@@ -41,12 +43,15 @@ public class EstadoReservaList extends HttpServlet {
 			
 			response.setContentType("application/json");
 		    response.setCharacterEncoding("UTF-8");
+		    response.setStatus(HttpStatusCode.HTTP_STATUS_OK);
 		    response.getWriter().print(gson.toJson(estados));
 		    response.getWriter().flush();
 		} catch (AccessDeniedException e) {
+		    response.setStatus(HttpStatusCode.HTTP_STATUS_UNAUTHORIZED);
 			response.getWriter().print(e.getMessage());
 			e.printStackTrace();
 		} catch (Exception e) {
+		    response.setStatus(HttpStatusCode.HTTP_STATUS_INTERNAR_SERVER_ERROR);
 			Logger logger = LogManager.getLogger(getClass());
 			logger.log(Level.ERROR, e.getMessage());			
 		}

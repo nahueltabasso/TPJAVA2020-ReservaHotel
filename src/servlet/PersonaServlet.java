@@ -20,6 +20,8 @@ import controller.PersonaController;
 import entities.Persona;
 import entities.Rol;
 import response.MessageErrorResponse;
+import utils.AppSession;
+import utils.HttpStatusCode;
 import utils.JsonToJavaObject;
 
 @WebServlet("/Persona")
@@ -34,7 +36,7 @@ public class PersonaServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		Gson gson = new Gson();
 		try {
-			Persona personaLogueada = (Persona) request.getSession().getAttribute("usuario");
+			Persona personaLogueada = AppSession.getUsuarioLogueado(request);
 			
 			if (personaLogueada == null || personaLogueada.getRol().getNombreRol().equalsIgnoreCase(Rol.CLIENTE)) {
 				throw new AccessDeniedException("Acceso denegado!");
@@ -44,17 +46,17 @@ public class PersonaServlet extends HttpServlet {
 			response.setContentType("application/json");
 		    response.setCharacterEncoding("UTF-8");
 		    response.getWriter().print(gson.toJson(personaList));
-			response.setStatus(200);
+			response.setStatus(HttpStatusCode.HTTP_STATUS_OK);
 		    response.getWriter().flush();
 		} catch (AccessDeniedException e) {
 			logger.log(Level.ERROR, e.getMessage());
 			MessageErrorResponse mensaje = new MessageErrorResponse(e.getMessage());
-			response.setStatus(401);
+			response.setStatus(HttpStatusCode.HTTP_STATUS_UNAUTHORIZED);
 			response.getWriter().print(gson.toJson(mensaje));
 		} catch (Exception e) {
 			logger.log(Level.ERROR, e.getMessage());
 			MessageErrorResponse mensaje = new MessageErrorResponse(e.getMessage());
-			response.setStatus(500);
+			response.setStatus(HttpStatusCode.HTTP_STATUS_INTERNAR_SERVER_ERROR);
 			response.getWriter().print(gson.toJson(mensaje));
 		}
 	}
@@ -68,7 +70,7 @@ public class PersonaServlet extends HttpServlet {
 			persona = new Gson().fromJson(payloadRequest, Persona.class);
 			
 			// Recuperamos el usuario logueado
-			Persona personaLogueada = (Persona) request.getSession().getAttribute("usuario");
+			Persona personaLogueada = AppSession.getUsuarioLogueado(request);
 			
 			// Validamos que tipo de persona se esta creando de acuerdo al rol
 			if (personaLogueada == null) {
@@ -91,18 +93,17 @@ public class PersonaServlet extends HttpServlet {
 			response.setContentType("application/json");
 		    response.setCharacterEncoding("UTF-8");
 		    response.getWriter().print(gson.toJson(personaDB));
-			response.setStatus(201);
-		    response.getWriter().flush();
-		    
+			response.setStatus(HttpStatusCode.HTTP_STATUS_CREATED);
+		    response.getWriter().flush();		    
 		} catch (AccessDeniedException e) {
 			logger.log(Level.ERROR, e.getMessage());
 			MessageErrorResponse mensaje = new MessageErrorResponse(e.getMessage());
-			response.setStatus(401);
+			response.setStatus(HttpStatusCode.HTTP_STATUS_UNAUTHORIZED);
 			response.getWriter().print(gson.toJson(mensaje));
 		} catch (Exception e) {
 			logger.log(Level.ERROR, e.getMessage());
 			MessageErrorResponse mensaje = new MessageErrorResponse(e.getMessage());
-			response.setStatus(500);
+			response.setStatus(HttpStatusCode.HTTP_STATUS_INTERNAR_SERVER_ERROR);
 			response.getWriter().print(gson.toJson(mensaje));
 		}
 	}
@@ -111,8 +112,8 @@ public class PersonaServlet extends HttpServlet {
 	protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		Gson gson = new Gson();
 		try {
-			Persona personaLogueada = (Persona) request.getSession().getAttribute("usuario");
-			
+			Persona personaLogueada = AppSession.getUsuarioLogueado(request);
+		
 			if (personaLogueada == null || personaLogueada.getRol().getNombreRol().equalsIgnoreCase(Rol.CLIENTE)) {
 				throw new AccessDeniedException("Acceso denegado!");
 			}
@@ -120,15 +121,19 @@ public class PersonaServlet extends HttpServlet {
 			personaCtrl.delete(id);
 			
 			logger.log(Level.INFO, "Persona eliminada con exito");
+			response.setContentType("application/json");
+		    response.setCharacterEncoding("UTF-8");
+			response.setStatus(HttpStatusCode.HTTP_STATUS_NO_CONTENT);
+		    response.getWriter().flush();		    
 		} catch (AccessDeniedException e) {
 			logger.log(Level.ERROR, e.getMessage());
 			MessageErrorResponse mensaje = new MessageErrorResponse(e.getMessage());
-			response.setStatus(401);
+			response.setStatus(HttpStatusCode.HTTP_STATUS_UNAUTHORIZED);
 			response.getWriter().print(gson.toJson(mensaje));
 		} catch (Exception e) {
 			logger.log(Level.ERROR, e.getMessage());
 			MessageErrorResponse mensaje = new MessageErrorResponse(e.getMessage());
-			response.setStatus(500);
+			response.setStatus(HttpStatusCode.HTTP_STATUS_INTERNAR_SERVER_ERROR);
 			response.getWriter().print(gson.toJson(mensaje));
 		}
 	}
@@ -143,7 +148,7 @@ public class PersonaServlet extends HttpServlet {
 			persona = new Gson().fromJson(payloadRequest, Persona.class);
 			
 			// Recuperamos el usuario logueado
-			Persona personaLogueada = (Persona) request.getSession().getAttribute("usuario");
+			Persona personaLogueada = AppSession.getUsuarioLogueado(request);
 			
 			// Validamos que el usuario este logueado
 			if (personaLogueada == null) {
@@ -166,15 +171,17 @@ public class PersonaServlet extends HttpServlet {
 			response.setContentType("application/json");
 		    response.setCharacterEncoding("UTF-8");
 		    response.getWriter().print(gson.toJson(personaDB));
-		    response.setStatus(201);
+		    response.setStatus(HttpStatusCode.HTTP_STATUS_CREATED);
 		    response.getWriter().flush();
 		} catch (AccessDeniedException e) {
 			logger.log(Level.ERROR, e.getMessage());
 			MessageErrorResponse mensaje = new MessageErrorResponse(e.getMessage());
+		    response.setStatus(HttpStatusCode.HTTP_STATUS_UNAUTHORIZED);
 			response.getWriter().print(gson.toJson(mensaje));
 		} catch (Exception e) {
 			logger.log(Level.ERROR, e.getMessage());
 			MessageErrorResponse mensaje = new MessageErrorResponse(e.getMessage());
+		    response.setStatus(HttpStatusCode.HTTP_STATUS_INTERNAR_SERVER_ERROR);
 			response.getWriter().print(gson.toJson(mensaje));
 		}
 	}

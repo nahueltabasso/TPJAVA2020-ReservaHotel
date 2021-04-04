@@ -18,6 +18,8 @@ import com.google.gson.Gson;
 import controller.PersonaController;
 import entities.Persona;
 import response.MessageErrorResponse;
+import utils.AppSession;
+import utils.HttpStatusCode;
 
 @WebServlet("/PersonaById")
 public class PersonaById extends HttpServlet {
@@ -31,7 +33,7 @@ public class PersonaById extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		Gson gson = new Gson();
 		try {
-			Persona personaLogueada = (Persona) request.getSession().getAttribute("usuario");
+			Persona personaLogueada = AppSession.getUsuarioLogueado(request);
 			
 			if (personaLogueada == null) {
 				throw new AccessDeniedException("Acceso denegado!");
@@ -43,17 +45,17 @@ public class PersonaById extends HttpServlet {
 			response.setContentType("application/json");
 		    response.setCharacterEncoding("UTF-8");
 		    response.getWriter().print(gson.toJson(persona));
-			response.setStatus(200);
+			response.setStatus(HttpStatusCode.HTTP_STATUS_OK);
 		    response.getWriter().flush();
 		} catch (AccessDeniedException e) {
 			logger.log(Level.ERROR, e.getMessage());
 			MessageErrorResponse mensaje = new MessageErrorResponse(e.getMessage());
-			response.setStatus(401);
+			response.setStatus(HttpStatusCode.HTTP_STATUS_UNAUTHORIZED);
 			response.getWriter().print(gson.toJson(mensaje));
 		} catch (Exception e) {
 			logger.log(Level.ERROR, e.getMessage());
 			MessageErrorResponse mensaje = new MessageErrorResponse(e.getMessage());
-			response.setStatus(500);
+			response.setStatus(HttpStatusCode.HTTP_STATUS_INTERNAR_SERVER_ERROR);
 			response.getWriter().print(gson.toJson(mensaje));
 		}
 	}

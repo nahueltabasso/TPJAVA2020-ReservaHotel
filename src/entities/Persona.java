@@ -23,6 +23,7 @@ public class Persona implements Serializable {
 	private Long legajo;
 	private Rol rol;
 	private Domicilio domicilio;
+	private String token;
 
 	public Persona() {
 	}
@@ -163,5 +164,11 @@ public class Persona implements Serializable {
 		this.domicilio = domicilio;
 	}
 
+	public String getToken() {
+		return token;
+	}
 	
+	public void setToken(String token) {
+		this.token = token;
+	}
 }

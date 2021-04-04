@@ -16,7 +16,6 @@
 		<filter-name>ConfigCORS</filter-name>
 		<filter-class>servlet.ConfigCORS</filter-class>
 	</filter>
-
 	<filter-mapping>
 		<filter-name>ConfigCORS</filter-name>
 		<url-pattern>/*</url-pattern>
