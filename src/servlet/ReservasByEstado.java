@@ -2,7 +2,7 @@ package servlet;
 
 import java.io.IOException;
 import java.nio.file.AccessDeniedException;
-import java.util.Date;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -17,23 +17,21 @@ import org.apache.logging.log4j.Logger;
 
 import com.google.gson.Gson;
 
-import controller.HabitacionController;
-import entities.Habitacion;
+import controller.ReservaController;
 import entities.Persona;
+import entities.Reserva;
 import response.MessageErrorResponse;
 import utils.AppSession;
 import utils.HttpStatusCode;
 
-import java.text.SimpleDateFormat;  
-
-@WebServlet("/HabitacionesDisponibles")
-public class HabitacionesDisponiblesServlet extends HttpServlet {
+@WebServlet("/ReservasByEstado")
+public class ReservasByEstado extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
 	private Logger logger = LogManager.getLogger(getClass());
-	private HabitacionController habitacionCtrl = new HabitacionController();
-       
-    public HabitacionesDisponiblesServlet() {}
+    private ReservaController reservaCtrl = new ReservaController();   
+
+    public ReservasByEstado() {}
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		Gson gson = new Gson();
@@ -43,15 +41,14 @@ public class HabitacionesDisponiblesServlet extends HttpServlet {
 			if (personaLogueada == null) {
 				throw new AccessDeniedException("Acceso denegado!");
 			}
+
+			Long idEstado = Long.parseLong(request.getParameter("idEstado"));
+			List<Reserva> reservaList = new ArrayList<Reserva>();
+			reservaList = reservaCtrl.getReservaByEstado(personaLogueada, idEstado);
 			
-			// Obtenemos los parametros del request
-			Long idTipoHabitacion = Long.parseLong(request.getParameter("idTipoHabitacion"));
-		    Date fechaDesde = new SimpleDateFormat("yyyy-MM-dd").parse(request.getParameter("fechaDesde"));  
-			
-			List<Habitacion> habitacionesDisponibles = habitacionCtrl.getHabitacionesDisponiblesParaReservar(idTipoHabitacion, fechaDesde);
 			response.setContentType("application/json");
 		    response.setCharacterEncoding("UTF-8");
-		    response.getWriter().print(gson.toJson(habitacionesDisponibles));
+		    response.getWriter().print(gson.toJson(reservaList));
 			response.setStatus(HttpStatusCode.HTTP_STATUS_OK);
 		    response.getWriter().flush();
 		} catch (AccessDeniedException e) {
@@ -65,7 +62,6 @@ public class HabitacionesDisponiblesServlet extends HttpServlet {
 			response.setStatus(HttpStatusCode.HTTP_STATUS_INTERNAR_SERVER_ERROR);
 			response.getWriter().print(gson.toJson(mensaje));
 		}
-
 	}
 
 }

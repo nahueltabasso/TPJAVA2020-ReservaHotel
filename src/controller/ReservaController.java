@@ -1,5 +1,6 @@
 package controller;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import org.apache.logging.log4j.Level;
@@ -9,6 +10,7 @@ import data.ReservaRepository;
 import entities.EstadoReserva;
 import entities.Persona;
 import entities.Reserva;
+import entities.Rol;
 import utils.Utils;
 import utils.email.EmailService;
 
@@ -76,5 +78,23 @@ public class ReservaController {
 			throw new Exception("ERROR - No existe reserva en la base de datos!");
 		}
 		reservaRepository.delete(id);		
+	}
+	
+	public List<Reserva> getReservaByEstado(Persona persona, Long idEstado) throws Exception {
+		logger.log(Level.INFO, "Ingresa a getReservaByEstado()");
+		List<Reserva> reservas = new ArrayList<Reserva>();
+		
+		if (persona.getRol().getNombreRol().equalsIgnoreCase(Rol.CLIENTE)) {
+			// Retornamos solos las reservas del cliente segun el estado
+			reservas = reservaRepository.findReservasByIdPersonaAndIdEstado(persona.getId(), idEstado);
+			return reservas;
+		} 
+		reservas = reservaRepository.findReservasByIdEstadoReserva(idEstado);
+		return reservas;
+	}
+	
+	public Reserva getReserva(Long id) throws Exception {
+		logger.log(Level.INFO, "Ingresa a getReserva()");
+		return reservaRepository.findById(id);
 	}
 }

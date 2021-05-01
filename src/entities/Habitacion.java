@@ -9,7 +9,7 @@ public class Habitacion {
 	private Date fechaCreacion;
 	private Date fechaEliminacion;
 	private TipoHabitacion tipoHabitacion;
-	
+	private boolean seleccionada;
 	
 	public Long getId() {
 		return id;
@@ -41,7 +41,11 @@ public class Habitacion {
 	public void setTipoHabitacion(TipoHabitacion tipoHabitacion) {
 		this.tipoHabitacion = tipoHabitacion;
 	}
+	public boolean isSeleccionada() {
+		return seleccionada;
+	}
+	public void setSeleccionada(boolean seleccionada) {
+		this.seleccionada = seleccionada;
+	}
 	
-	
-
 }

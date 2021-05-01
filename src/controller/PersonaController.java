@@ -72,6 +72,14 @@ public class PersonaController {
 		return actualizar(id, persona);
 	}
 	
+	public Persona getPersonaByDocumento(String tipoDocumento, Long numeroDocumento) throws Exception {
+		Persona persona = personaRepository.findByTipoAndNroDocumento(tipoDocumento, numeroDocumento);
+		if (persona.getId() == null) {
+			return null;
+		}
+		return persona;
+	}
+	
 	private void preValidation(Persona persona, boolean isCreate) throws Exception {
 		logger.log(Level.INFO, "Ingresa a preValidation()");
 		boolean valid;
@@ -81,9 +89,12 @@ public class PersonaController {
 				throw new Exception ("El usuario ya existe en la base de datos");
 			}
 		} else {
-			valid = personaRepository.existPersonaByEmail(persona.getEmail());
-			if (valid) {
-				throw new Exception("El email ya existe en la base de datos");
+			Persona personaDB = personaRepository.findById(persona.getId());
+			if (!personaDB.getEmail().equalsIgnoreCase(persona.getEmail())) {
+				valid = personaRepository.existPersonaByEmail(persona.getEmail());
+				if (valid) {
+					throw new Exception("El email ya existe en la base de datos");
+				}
 			}
 		}
 	}

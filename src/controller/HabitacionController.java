@@ -58,6 +58,7 @@ public class HabitacionController {
 	public List<Habitacion> getHabitacionesDisponiblesParaReservar(Long idTipoHabitacion, Date fechaDesde) throws Exception {
 		List<Habitacion> dtoList = new ArrayList<Habitacion>();
 		dtoList = habitacionRepository.findHabitacionesDisponiblesParaReserva(new java.sql.Date(fechaDesde.getTime()), idTipoHabitacion);
+		dtoList.forEach(dto -> dto.setSeleccionada(false));
 		return dtoList;
 	}
 	

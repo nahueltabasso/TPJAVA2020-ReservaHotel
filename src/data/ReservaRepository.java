@@ -402,4 +402,56 @@ public class ReservaRepository {
 		return row;
 	}
 
+	public List<Reserva> findReservasByIdPersonaAndIdEstado(Long idPersona, Long idEstado) throws Exception {
+		Connection connection = null;
+		PreparedStatement statement = null;
+		ResultSet resultSet = null;
+		List<Reserva> reservasList = new ArrayList<Reserva>();
+		try {
+			connection = DataBaseConnection.getConnection();
+			statement = connection.prepareStatement("select * from reservas where idPersona = ? and idEstadoReserva = ?");
+			statement.setLong(1, idPersona);
+			statement.setLong(2, idEstado);
+			
+			resultSet = statement.executeQuery();
+			while (resultSet.next()) {
+				Reserva reserva = buildReserva(resultSet);
+				reservasList.add(reserva);
+			}
+		} catch (SQLException e) {
+			logger.log(Level.ERROR, e.getMessage());
+			throw e;
+		} finally {
+			DataBaseConnection.closeResultSet(resultSet);
+			DataBaseConnection.closePreparedStatement(statement);
+			DataBaseConnection.closeConnection(connection);
+		}
+		return reservasList;
+	}	
+	
+	public List<Reserva> findReservasIdEstado(Long idEstado) throws Exception {
+		Connection connection = null;
+		PreparedStatement statement = null;
+		ResultSet resultSet = null;
+		List<Reserva> reservasList = new ArrayList<Reserva>();
+		try {
+			connection = DataBaseConnection.getConnection();
+			statement = connection.prepareStatement("select * from reservas where idEstadoReserva = ?");
+			statement.setLong(1, idEstado);
+			
+			resultSet = statement.executeQuery();
+			while (resultSet.next()) {
+				Reserva reserva = buildReserva(resultSet);
+				reservasList.add(reserva);
+			}
+		} catch (SQLException e) {
+			logger.log(Level.ERROR, e.getMessage());
+			throw e;
+		} finally {
+			DataBaseConnection.closeResultSet(resultSet);
+			DataBaseConnection.closePreparedStatement(statement);
+			DataBaseConnection.closeConnection(connection);
+		}
+		return reservasList;
+	}	
 }

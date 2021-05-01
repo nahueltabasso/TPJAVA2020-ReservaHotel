@@ -78,11 +78,9 @@ public class PersonaServlet extends HttpServlet {
 					throw new AccessDeniedException("Acceso Denegado - Solo un perfil Administrador puede crear Empleados o Administradores");
 				}
 			} else {
-				if (persona.getRol().getNombreRol().equalsIgnoreCase(Rol.EMPLEADO) || persona.getRol().getNombreRol().equalsIgnoreCase(Rol.ADMINISTRADOR)) {
-					if (personaLogueada == null || !personaLogueada.getRol().getNombreRol().equalsIgnoreCase(Rol.ADMINISTRADOR)) {
-						throw new AccessDeniedException("Acceso Denegado - Solo un perfil Administrador puede crear Empleados o Administradores");
-					}
-				}				
+				if (personaLogueada == null || !personaLogueada.getRol().getNombreRol().equalsIgnoreCase(Rol.ADMINISTRADOR)) {
+					throw new AccessDeniedException("Acceso Denegado - Solo un perfil Administrador puede crear Empleados o Administradores");
+				}
 			}
 			
 			// Si llego aca implica que se cumplen con los permisos, persistimos el objeto
@@ -117,6 +115,7 @@ public class PersonaServlet extends HttpServlet {
 			if (personaLogueada == null || personaLogueada.getRol().getNombreRol().equalsIgnoreCase(Rol.CLIENTE)) {
 				throw new AccessDeniedException("Acceso denegado!");
 			}
+			
 			Long id = Long.parseLong(request.getParameter("idPersona"));
 			personaCtrl.delete(id);
 			
