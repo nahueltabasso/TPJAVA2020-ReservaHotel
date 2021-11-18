@@ -34,7 +34,7 @@ public class ReservaController {
 		validReservaBeforeSave(reserva);
 		Reserva reservaDB = reservaRepository.save(reserva);
 		emailService.sendEmail(reservaDB.getPersona(), "La habitacion " + reserva.getHabitacion().getNumeroHabitacion() + " ha sido reservada!", "Aviso de Reserva");
-		return reservaRepository.save(reserva);
+		return reservaDB;
 	}
 	
 	public void cancelarReserva(Long id) throws Exception {
