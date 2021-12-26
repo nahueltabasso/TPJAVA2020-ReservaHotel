@@ -18,6 +18,7 @@ import com.google.gson.Gson;
 
 import controller.RolController;
 import entities.Rol;
+import response.MessageErrorResponse;
 import utils.HttpStatusCode;
 
 @WebServlet("/RolList")
@@ -42,8 +43,9 @@ public class RolListServlet extends HttpServlet {
 		} catch (Exception e) {
 			Logger logger = LogManager.getLogger(getClass());
 			logger.log(Level.ERROR, e.getMessage());
+			MessageErrorResponse mensaje = new MessageErrorResponse(e.getMessage());
 			response.setStatus(HttpStatusCode.HTTP_STATUS_INTERNAR_SERVER_ERROR);
-			e.printStackTrace();
+			response.getWriter().print(gson.toJson(mensaje));
 		}
 	}
 

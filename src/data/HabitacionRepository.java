@@ -263,7 +263,7 @@ public class HabitacionRepository {
 			statement = connection.prepareStatement("select hab.* " + 
 													"from habitaciones hab " + 
 													"inner join tipohabitaciones th on th.id = hab.idTipoHabitacion " + 
-													"where hab.id not in (select res.idHabitacion from reservas res where ? not between res.fechaEntrada and res.fechaSalida and res.fechaCancelacion is null " + 
+													"where hab.id not in (select res.idHabitacion from reservas res where ? between res.fechaEntrada and res.fechaSalida and res.fechaCancelacion is null " + 
 													"					and res.idHabitacion is not null) and th.id = ?");
 
 			statement.setDate(1, fechaDesde);

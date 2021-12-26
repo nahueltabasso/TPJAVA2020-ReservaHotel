@@ -15,6 +15,7 @@ import com.google.gson.Gson;
 
 import controller.LoginController;
 import entities.Persona;
+import response.MessageErrorResponse;
 import utils.HttpStatusCode;
 import utils.JsonToJavaObject;
 
@@ -32,6 +33,7 @@ public class LoginServlet extends HttpServlet {
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		Gson gson = new Gson();
 		try {
 			String payloadRequest = JsonToJavaObject.getBody(request);
 			
@@ -48,7 +50,9 @@ public class LoginServlet extends HttpServlet {
 		    response.getWriter().flush();
 		} catch (Exception e) {
 			logger.log(Level.ERROR, e.getMessage());
+			MessageErrorResponse mensaje = new MessageErrorResponse(e.getMessage());
 			response.setStatus(HttpStatusCode.HTTP_STATUS_UNAUTHORIZED);
+			response.getWriter().print(gson.toJson(mensaje));
 		}
 	}
 

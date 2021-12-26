@@ -18,6 +18,7 @@ import com.google.gson.Gson;
 import controller.EstadoReservaController;
 import entities.EstadoReserva;
 import entities.Persona;
+import response.MessageErrorResponse;
 import utils.AppSession;
 import utils.HttpStatusCode;
 
@@ -49,14 +50,15 @@ public class EstadoReservaByDescripcion extends HttpServlet {
 		    response.setStatus(HttpStatusCode.HTTP_STATUS_OK);
 		    response.getWriter().flush();
 		} catch (AccessDeniedException e) {
-			response.getWriter().print(e.getMessage());
+			logger.log(Level.ERROR, e.getMessage());
+			MessageErrorResponse mensaje = new MessageErrorResponse(e.getMessage());
 			response.setStatus(HttpStatusCode.HTTP_STATUS_UNAUTHORIZED);
-			e.printStackTrace();
+			response.getWriter().print(gson.toJson(mensaje));
 		} catch (Exception e) {
-			Logger logger = LogManager.getLogger(getClass());
-			logger.log(Level.ERROR, e.getMessage());		
+			logger.log(Level.ERROR, e.getMessage());
+			MessageErrorResponse mensaje = new MessageErrorResponse(e.getMessage());
 			response.setStatus(HttpStatusCode.HTTP_STATUS_INTERNAR_SERVER_ERROR);
-			response.getWriter().print(e.getMessage());
+			response.getWriter().print(gson.toJson(mensaje));
 		}
 
 	}

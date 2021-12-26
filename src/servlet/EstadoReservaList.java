@@ -10,15 +10,12 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.google.gson.Gson;
 
 import controller.EstadoReservaController;
 import entities.EstadoReserva;
 import entities.Persona;
+import response.MessageErrorResponse;
 import utils.AppSession;
 import utils.HttpStatusCode;
 
@@ -47,13 +44,13 @@ public class EstadoReservaList extends HttpServlet {
 		    response.getWriter().print(gson.toJson(estados));
 		    response.getWriter().flush();
 		} catch (AccessDeniedException e) {
-		    response.setStatus(HttpStatusCode.HTTP_STATUS_UNAUTHORIZED);
-			response.getWriter().print(e.getMessage());
-			e.printStackTrace();
+			MessageErrorResponse mensaje = new MessageErrorResponse(e.getMessage());
+			response.setStatus(HttpStatusCode.HTTP_STATUS_UNAUTHORIZED);
+			response.getWriter().print(gson.toJson(mensaje));
 		} catch (Exception e) {
-		    response.setStatus(HttpStatusCode.HTTP_STATUS_INTERNAR_SERVER_ERROR);
-			Logger logger = LogManager.getLogger(getClass());
-			logger.log(Level.ERROR, e.getMessage());			
+			MessageErrorResponse mensaje = new MessageErrorResponse(e.getMessage());
+			response.setStatus(HttpStatusCode.HTTP_STATUS_INTERNAR_SERVER_ERROR);
+			response.getWriter().print(gson.toJson(mensaje));
 		}
 	}
 
