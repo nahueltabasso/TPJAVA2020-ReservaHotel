@@ -68,18 +68,22 @@ public class PersonaServlet extends HttpServlet {
 			
 			Persona persona = new Persona();
 			persona = new Gson().fromJson(payloadRequest, Persona.class);
-			
-			// Recuperamos el usuario logueado
-			Persona personaLogueada = AppSession.getUsuarioLogueado(request);
-			
-			// Validamos que tipo de persona se esta creando de acuerdo al rol
-			if (personaLogueada == null) {
-				if (persona.getRol() != null) {
-					throw new AccessDeniedException("Acceso Denegado - Solo un perfil Administrador puede crear Empleados o Administradores");
-				}
-			} else {
-				if (personaLogueada == null || !personaLogueada.getRol().getNombreRol().equalsIgnoreCase(Rol.ADMINISTRADOR)) {
-					throw new AccessDeniedException("Acceso Denegado - Solo un perfil Administrador puede crear Empleados o Administradores");
+
+			// Si el rol es igual a null implica que se registra un usuario comun por lo tanto no pasa la validacion de seguridad
+			if (persona.getRol() != null) {
+				
+				// Recuperamos el usuario logueado
+				Persona personaLogueada = AppSession.getUsuarioLogueado(request);
+				
+				// Validamos que tipo de persona se esta creando de acuerdo al rol
+				if (personaLogueada == null) {
+					if (persona.getRol() != null) {
+						throw new AccessDeniedException("Acceso Denegado - Solo un perfil Administrador puede crear Empleados o Administradores");
+					}
+				} else {
+					if (personaLogueada == null || !personaLogueada.getRol().getNombreRol().equalsIgnoreCase(Rol.ADMINISTRADOR)) {
+						throw new AccessDeniedException("Acceso Denegado - Solo un perfil Administrador puede crear Empleados o Administradores");
+					}
 				}
 			}
 			
